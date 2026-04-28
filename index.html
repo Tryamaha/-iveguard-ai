@@ -5,85 +5,34 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#07111d">
-<title>DriveGuard AI V25 Pro Stable</title>
+<title>DriveGuard AI V26 Drawer Stable</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
-/* V25 NAV BAR FIX */
-.navBar{
-  top:calc(env(safe-area-inset-top) + 92px) !important;
-  bottom:auto !important;
-  left:auto !important;
-  right:8px !important;
-  transform:none !important;
-  flex-direction:row !important;
-  gap:6px !important;
-  z-index:65 !important;
-}
 
-.navBtn{
-  width:38px !important;
-  height:38px !important;
-  padding:0 !important;
-  border-radius:50% !important;
-  background:rgba(5,12,26,.38) !important;
-  backdrop-filter:blur(10px) !important;
-  -webkit-backdrop-filter:blur(10px) !important;
-  border:1px solid rgba(255,255,255,.18) !important;
-  font-size:0 !important;
-}
-
-.navBtn:nth-child(1)::after{
-  content:"‹";
-  font-size:28px;
-  line-height:38px;
-}
-
-.navBtn:nth-child(2)::after{
-  content:"⌖";
-  font-size:18px;
-  line-height:38px;
-}
-
-.navBtn:nth-child(3)::after{
-  content:"×";
-  font-size:24px;
-  line-height:38px;
-}
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{
 width:100%;height:100%;overflow:hidden;background:#07111d;color:#fff;
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
 }
-#map{
-position:fixed;inset:0;z-index:1;
-filter:brightness(1.03) contrast(1.04);
-}
-.mapShade{
-position:fixed;inset:0;z-index:2;pointer-events:none;
-background:radial-gradient(circle at center,rgba(0,0,0,0) 20%,rgba(0,0,0,.18) 100%);
-}
-.satDim{
-position:fixed;inset:0;z-index:3;pointer-events:none;background:rgba(0,0,0,.10);display:none;
-}
+#map{position:fixed;inset:0;z-index:1;filter:brightness(1.03) contrast(1.04)}
+.mapShade{position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(circle at center,rgba(0,0,0,0) 22%,rgba(0,0,0,.15) 100%)}
+.satDim{position:fixed;inset:0;z-index:3;pointer-events:none;background:rgba(0,0,0,.10);display:none}
+
 .glass{
 background:linear-gradient(145deg,rgba(8,15,30,.76),rgba(3,7,18,.60));
-backdrop-filter:blur(16px);
--webkit-backdrop-filter:blur(16px);
+backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
 border:1px solid rgba(150,190,255,.12);
 box-shadow:0 8px 26px rgba(0,0,0,.28);
 }
 
-/* TOP STATUS */
 .topPanel{
 position:absolute;z-index:20;
 top:calc(env(safe-area-inset-top)+8px);
-left:8px;
-width:47%;
-border-radius:18px;
-padding:8px;
+left:8px;width:47%;
+border-radius:18px;padding:8px;
 }
 .brandRow{display:flex;justify-content:space-between;align-items:center}
 .brand{font-size:14px;font-weight:950}
@@ -100,45 +49,34 @@ display:flex;align-items:center;justify-content:center;
 border:1px solid #00eaff;color:#00eaff;font-size:10px;font-weight:950;
 }
 
-/* RIGHT BUTTONS */
 .controls{
 position:absolute;z-index:21;
 top:calc(env(safe-area-inset-top)+12px);
-right:8px;
-width:27%;
+right:8px;width:27%;
 display:flex;flex-direction:column;gap:7px;
 }
 .ctrl{
-padding:8px 4px;
-border-radius:14px;
-border:1px solid rgba(160,200,255,.14);
+padding:8px 4px;border-radius:14px;border:1px solid rgba(160,200,255,.14);
 background:linear-gradient(145deg,rgba(5,12,26,.84),rgba(2,6,16,.72));
 color:white;font-size:9px;font-weight:950;
 }
 .ctrl.primary{background:linear-gradient(135deg,#00eaff,#125cff)}
 .ctrl.on{background:linear-gradient(135deg,#00c853,#00eaff)}
 
-/* STREET CHIP */
 .streetChip{
 position:absolute;z-index:23;
 top:calc(env(safe-area-inset-top)+175px);
 left:78px;right:118px;
-border-radius:999px;
-padding:7px 10px;
+border-radius:999px;padding:7px 10px;
 font-size:10px;font-weight:900;text-align:center;
 white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 
-/* CAMERA */
 #camWrap{
 position:absolute;z-index:50;
-right:10px;
-bottom:calc(env(safe-area-inset-bottom)+220px);
-width:132px;height:180px;
-border-radius:16px;
-overflow:hidden;
-display:none;
-background:#000;
+right:10px;bottom:calc(env(safe-area-inset-bottom)+220px);
+width:132px;height:180px;border-radius:16px;
+overflow:hidden;display:none;background:#000;
 border:2px solid rgba(0,234,255,.55);
 }
 #cam{width:100%;height:100%;object-fit:cover}
@@ -149,7 +87,6 @@ font-size:9px;padding:3px 4px;border-radius:999px;
 background:rgba(0,0,0,.55);text-align:center;font-weight:900;
 }
 
-/* CENTER CAR */
 .carCenter{
 width:48px;height:48px;border-radius:50%;
 background:radial-gradient(circle,#fff 0%,#8ff7ff 18%,#00c8ff 45%,#126bff 100%);
@@ -159,11 +96,9 @@ font-size:20px;font-weight:950;
 box-shadow:0 0 0 10px rgba(0,234,255,.10),0 0 24px rgba(0,234,255,.55);
 }
 
-/* SPEED + INFO */
 .speedHud{
 position:absolute;z-index:22;
-left:14px;
-bottom:calc(env(safe-area-inset-bottom)+105px);
+left:14px;bottom:calc(env(safe-area-inset-bottom)+105px);
 width:78px;height:78px;border-radius:50%;
 background:radial-gradient(circle,rgba(255,255,255,.95) 0%,rgba(0,234,255,.18) 28%,rgba(2,8,21,.95) 62%);
 border:2px solid rgba(0,234,255,.60);
@@ -186,13 +121,11 @@ width:30px;height:30px;border-radius:50%;border:2px solid #ff7845;
 display:flex;align-items:center;justify-content:center;font-size:13px;color:#ffb184;
 }
 
-/* FOOTER */
 .liveFooter{
 position:absolute;z-index:24;
 left:12px;right:12px;
 bottom:calc(env(safe-area-inset-bottom)+10px);
-border-radius:18px;
-padding:10px;
+border-radius:18px;padding:10px;
 }
 .footerHead{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:950}
 .footerSub{margin-top:6px;font-size:10px;color:#dce8ff;display:flex;justify-content:space-between;gap:8px}
@@ -200,36 +133,48 @@ padding:10px;
 .progress{height:100%;width:0%;background:linear-gradient(90deg,#00eaff,#5f5cff,#ff8a00)}
 .trafficDot{width:12px;height:12px;border-radius:50%;background:#00c853;box-shadow:0 0 12px #00c853}
 
-/* GLOBAL BACK BAR */
-.navBar{
-position:absolute;z-index:60;
-left:50%;transform:translateX(-50%);
-bottom:calc(env(safe-area-inset-bottom)+92px);
-display:flex;gap:8px;
-}
-.navBtn{
-padding:8px 14px;
-border-radius:999px;
-border:1px solid rgba(255,255,255,.12);
-background:rgba(8,15,30,.84);
-color:white;font-size:10px;font-weight:900;
+/* GİZLİ ÇEKMECE */
+.drawerTab{
+position:absolute;z-index:71;
+top:calc(env(safe-area-inset-top)+92px);
+left:8px;width:38px;height:38px;
+border-radius:50%;
+border:1px solid rgba(255,255,255,.18);
+background:rgba(5,12,26,.35);
+backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+color:white;font-size:24px;font-weight:900;
 }
 
-/* PANELS */
+.navBar{
+position:absolute!important;
+top:calc(env(safe-area-inset-top)+88px)!important;
+left:8px!important;right:auto!important;bottom:auto!important;
+transform:none!important;
+z-index:70!important;
+display:flex!important;flex-direction:column!important;gap:6px!important;
+opacity:0!important;pointer-events:none!important;
+transition:.25s ease!important;
+}
+.navBar.open{opacity:1!important;pointer-events:auto!important}
+.navBtn{
+width:42px!important;height:42px!important;padding:0!important;border-radius:50%!important;
+background:rgba(5,12,26,.38)!important;
+backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important;
+border:1px solid rgba(255,255,255,.18)!important;
+font-size:0!important;color:white!important;
+}
+.navBtn:nth-child(1)::after{content:"‹";font-size:30px;line-height:42px}
+.navBtn:nth-child(2)::after{content:"⌖";font-size:18px;line-height:42px}
+.navBtn:nth-child(3)::after{content:"×";font-size:25px;line-height:42px}
+
 .panel{
 position:absolute;z-index:40;
 left:10px;right:10px;
 top:calc(env(safe-area-inset-top)+215px);
-border-radius:18px;
-padding:10px;
-display:none;
+border-radius:18px;padding:10px;display:none;
 }
-.panelHead{
-display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:12px;font-weight:950
-}
-.panelClose{
-padding:5px 10px;border-radius:999px;background:#ff1744;border:0;color:white;font-size:10px;font-weight:900
-}
+.panelHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:12px;font-weight:950}
+.panelClose{padding:5px 10px;border-radius:999px;background:#ff1744;border:0;color:white;font-size:10px;font-weight:900}
 
 .leaflet-control-attribution{opacity:.12!important;transform:scale(.5)}
 </style>
@@ -249,7 +194,7 @@ padding:5px 10px;border-radius:999px;background:#ff1744;border:0;color:white;fon
 <div class="topPanel glass">
  <div class="brandRow">
    <div class="brand">DriveGuard AI</div>
-   <div class="pill">V25 PRO</div>
+   <div class="pill">V26 DRAWER</div>
  </div>
 
  <div class="metrics">
@@ -263,7 +208,7 @@ padding:5px 10px;border-radius:999px;background:#ff1744;border:0;color:white;fon
 
  <div class="aiRow">
    <div class="aiIcon">AI</div>
-   <div id="aiText">Stable sistem hazırlanıyor.</div>
+   <div id="aiText">Drawer Stable sistem hazır.</div>
  </div>
 </div>
 
@@ -278,10 +223,12 @@ padding:5px 10px;border-radius:999px;background:#ff1744;border:0;color:white;fon
 
 <div class="streetChip glass" id="streetChip">Yol adı bekleniyor</div>
 
+<button class="drawerTab" onclick="toggleBackDrawer()">‹</button>
+
 <div class="navBar">
- <button class="navBtn" onclick="goBackPanel()">◀ GERİ</button>
- <button class="navBtn" onclick="centerCar()">⌂ MERKEZ</button>
- <button class="navBtn" onclick="closeAllPanels()">✕ KAPAT</button>
+ <button class="navBtn" onclick="goBackPanel()">GERİ</button>
+ <button class="navBtn" onclick="centerCar()">MERKEZ</button>
+ <button class="navBtn" onclick="closeAllPanels()">KAPAT</button>
 </div>
 <div class="speedHud"><b id="orbSpeed">0</b><span>KM/S</span></div>
 
@@ -403,7 +350,7 @@ function initMap(){
  preloadAI();
  registerOfflineMode();
 
- setText("aiText","V25 Pro Stable hazır.");
+ setText("aiText","V26 Drawer Stable hazır.");
 }
 
 function setBaseLayer(type){
@@ -412,6 +359,21 @@ function setBaseLayer(type){
  document.getElementById("satDim").style.display=type==="satellite"?"block":"none";
  if(trafficLayer&&trafficEnabled) trafficLayer.addTo(map);
 }
+
+function toggleBackDrawer(){
+ const nav=document.querySelector(".navBar");
+ if(nav) nav.classList.toggle("open");
+}
+
+document.addEventListener("click",function(e){
+ const nav=document.querySelector(".navBar");
+ const tab=document.querySelector(".drawerTab");
+ if(!nav||!tab)return;
+
+ if(!nav.contains(e.target)&&!tab.contains(e.target)){
+  nav.classList.remove("open");
+ }
+});
 
 function openPanel(id){
  closeAllPanels();
@@ -424,6 +386,9 @@ function closeAllPanels(){
   const el=document.getElementById(id);
   if(el) el.style.display="none";
  });
+
+ const nav=document.querySelector(".navBar");
+ if(nav) nav.classList.remove("open");
 }
 
 function goBackPanel(){
@@ -458,84 +423,23 @@ async function preloadAI(){
   setText("aiText","AI model yüklenemedi.");
  }
 }
-async function loadDynamicSafetyPoints(lat,lng){
- if(Date.now()-lastOSMLoad<60000)return;
- lastOSMLoad=Date.now();
-
- try{
-   const d=0.06;
-   const q=`
-   [out:json];
-   (
-    node["highway"="speed_camera"](${lat-d},${lng-d},${lat+d},${lng+d});
-    node["highway"="traffic_signals"](${lat-d},${lng-d},${lat+d},${lng+d});
-    node["highway"="crossing"](${lat-d},${lng-d},${lat+d},${lng+d});
-    node["amenity"="fuel"](${lat-d},${lng-d},${lat+d},${lng+d});
-    node["amenity"="school"](${lat-d},${lng-d},${lat+d},${lng+d});
-    node["highway"="motorway_junction"](${lat-d},${lng-d},${lat+d},${lng+d});
-   );
-   out;
-   `;
-   const r=await fetch("https://overpass-api.de/api/interpreter",{method:"POST",body:q});
-   const json=await r.json();
-
-   safetyPoints=[];
-
-   json.elements.forEach(n=>{
-     let type="camera",note="Güvenlik noktası",limit=50;
-     if(n.tags.highway==="traffic_signals"){type="danger";note="Trafik ışığı";}
-     if(n.tags.highway==="crossing"){type="school";note="Yaya geçidi";limit=30;}
-     if(n.tags.amenity==="fuel"){type="fuel";note="Benzinlik / mola";}
-     if(n.tags.amenity==="school"){type="school";note="Okul çevresi";limit=30;}
-     if(n.tags.highway==="motorway_junction"){type="danger";note="Kavşak çıkışı";limit=70;}
-
-     safetyPoints.push({
-       name:n.tags.name||note,
-       lat:n.lat,lng:n.lon,
-       type:type,note:note,limit:limit
-     });
-   });
-
-   drawSafetyPoints();
- }catch(e){}
-}
-
-function drawSafetyPoints(){
- markerLayer.clearLayers();
-
- safetyPoints.forEach(p=>{
-   const color=p.type==="camera"?"#7c4dff":p.type==="school"?"#2878ff":p.type==="fuel"?"#00b894":"#ff273d";
-   const icon=p.type==="camera"?"📷":p.type==="school"?"🎓":p.type==="fuel"?"⛽":"!";
-
-   const div=L.divIcon({
-    html:`<div style="width:28px;height:28px;border-radius:50%;background:${color};border:3px solid white;display:flex;align-items:center;justify-content:center;font-size:12px;box-shadow:0 0 12px ${color}">${icon}</div>`,
-    className:"",
-    iconSize:[28,28],
-    iconAnchor:[14,14]
-   });
-
-   L.marker([p.lat,p.lng],{icon:div}).addTo(markerLayer);
- });
-}
-
 function bindSearchSuggest(){
  const to=document.getElementById("toInput");
  to.addEventListener("input",debounce(async function(){
-   const q=this.value.trim();
-   if(q.length<3)return;
-   showSuggestions(await tomtomSearch(q));
+  const q=this.value.trim();
+  if(q.length<3)return;
+  showSuggestions(await tomtomSearch(q));
  },350));
 }
 
 async function tomtomSearch(q){
  const lat=currentLat||38.6191;
  const lon=currentLng||27.4289;
- const u=`https://api.tomtom.com/search/2/search/${encodeURIComponent(q)}.json?key=${TOMTOM_KEY}&limit=8&countrySet=TR&language=tr-TR&lat=${lat}&lon=${lon}&radius=150000&typeahead=true`;
-
+ const url=`https://api.tomtom.com/search/2/search/${encodeURIComponent(q)}.json?key=${TOMTOM_KEY}&limit=8&countrySet=TR&language=tr-TR&lat=${lat}&lon=${lon}&radius=150000&typeahead=true`;
  try{
-   const r=await fetch(u);
-   const d=await r.json();
-   return d.results||[];
+  const r=await fetch(url);
+  const d=await r.json();
+  return d.results||[];
  }catch(e){return[];}
 }
 
@@ -545,17 +449,16 @@ function showSuggestions(results){
  if(!results.length){box.style.display="none";return;}
 
  results.forEach(r=>{
-   const label=r.poi?.name||r.address?.freeformAddress||"Konum";
-   const div=document.createElement("div");
-   div.style.padding="8px";
-   div.style.borderBottom="1px solid rgba(255,255,255,.06)";
-   div.innerHTML=label;
-   div.onclick=()=>{
-     document.getElementById("toInput").value=label;
-     currentDestination={lat:r.position.lat,lng:r.position.lon,name:label};
-     box.style.display="none";
-   };
-   box.appendChild(div);
+  const label=r.poi?.name||r.address?.freeformAddress||"Konum";
+  const div=document.createElement("div");
+  div.style.cssText="padding:9px;border-bottom:1px solid rgba(255,255,255,.08);font-size:11px";
+  div.innerHTML=label;
+  div.onclick=()=>{
+   document.getElementById("toInput").value=label;
+   currentDestination={lat:r.position.lat,lng:r.position.lon,name:label};
+   box.style.display="none";
+  };
+  box.appendChild(div);
  });
  box.style.display="block";
 }
@@ -565,43 +468,48 @@ async function searchAndRoute(){
 
  let dest=currentDestination;
  if(!dest){
-   const q=document.getElementById("toInput").value.trim();
-   if(!q)return;
-   const rs=await tomtomSearch(q);
-   if(!rs.length){alert("Hedef bulunamadı.");return;}
-   dest={lat:rs[0].position.lat,lng:rs[0].position.lon,name:q};
+  const q=document.getElementById("toInput").value.trim();
+  if(!q)return;
+  const rs=await tomtomSearch(q);
+  if(!rs.length){alert("Hedef bulunamadı.");return;}
+  dest={lat:rs[0].position.lat,lng:rs[0].position.lon,name:q};
  }
 
  const avoid=avoidUnpaved?"&avoid=unpavedRoads":"";
- const u=`https://api.tomtom.com/routing/1/calculateRoute/${currentLat},${currentLng}:${dest.lat},${dest.lng}/json?key=${TOMTOM_KEY}&traffic=true&travelMode=car&routeType=${routeMode}${avoid}&instructionsType=text&language=tr-TR`;
+ const url=`https://api.tomtom.com/routing/1/calculateRoute/${currentLat},${currentLng}:${dest.lat},${dest.lng}/json?key=${TOMTOM_KEY}&traffic=true&travelMode=car&routeType=${routeMode}${avoid}&instructionsType=text&language=tr-TR`;
 
  try{
-   const r=await fetch(u);
-   const d=await r.json();
-   const route=d.routes[0];
-   const pts=route.legs[0].points.map(p=>[p.latitude,p.longitude]);
+  const r=await fetch(url);
+  const d=await r.json();
+  const route=d.routes[0];
+  const pts=route.legs[0].points.map(p=>[p.latitude,p.longitude]);
 
-   currentRouteCoords=pts;
-   navRouteGlow.setLatLngs(pts);
-   navRouteLine.setLatLngs(pts);
-   navRouteCore.setLatLngs(pts);
+  currentRouteCoords=pts;
+  navRouteGlow.setLatLngs(pts);
+  navRouteLine.setLatLngs(pts);
+  navRouteCore.setLatLngs(pts);
 
-   routeInstructions=(route.guidance?.instructions||[]).map(i=>({
-     message:i.message,distance:i.routeOffsetInMeters,maneuver:i.maneuver||""
-   }));
+  routeInstructions=(route.guidance?.instructions||[]).map(i=>({
+   message:i.message,
+   distance:i.routeOffsetInMeters,
+   maneuver:i.maneuver||""
+  }));
 
-   const sum=route.summary;
-   const km=(sum.lengthInMeters/1000).toFixed(1);
-   const min=Math.round(sum.travelTimeInSeconds/60);
+  const sum=route.summary;
+  const km=(sum.lengthInMeters/1000).toFixed(1);
+  const min=Math.round(sum.travelTimeInSeconds/60);
 
-   setText("routeInfo",`${dest.name} • ${km} km • ${min} dk`);
-   setText("navEta",`${km} km • ${min} dk`);
-   setText("navTraffic",routeMode==="shortest"?"Kısa rota":"Hızlı rota");
-   document.getElementById("turnPanel").style.display="block";
-   closeAllPanels();
+  setText("routeInfo",`${dest.name} • ${km} km • ${min} dk`);
+  setText("navEta",`${km} km • ${min} dk`);
+  setText("navTraffic",routeMode==="shortest"?"Kısa rota":"Hızlı rota");
+  setText("infoTitle","Rota hazır");
+  setText("infoText",`${dest.name} • ${km} km • ${min} dk`);
+  setText("infoBadge","🧭");
 
-   map.fitBounds(navRouteLine.getBounds(),{padding:[40,40]});
-   speak("Rota oluşturuldu.");
+  closeAllPanels();
+  document.getElementById("turnPanel").style.display="block";
+  map.fitBounds(navRouteLine.getBounds(),{padding:[40,40]});
+  speak("Rota oluşturuldu.");
  }catch(e){alert("Rota hatası.");}
 }
 
@@ -609,12 +517,13 @@ function toggleNavigation(){
  navigationActive=!navigationActive;
 
  if(!navigationActive){
-   if(watchId!==null){
-     navigator.geolocation.clearWatch(watchId);
-     watchId=null;
-   }
-   setText("gpsState","GPS DURDU");
-   return;
+  if(watchId!==null){
+   navigator.geolocation.clearWatch(watchId);
+   watchId=null;
+  }
+  setText("gpsState","GPS DURDU");
+  setText("aiText","Navigasyon durduruldu.");
+  return;
  }
 
  startDrive();
@@ -624,37 +533,117 @@ function startDrive(){
  if(!navigator.geolocation){alert("GPS yok");return;}
 
  watchId=navigator.geolocation.watchPosition(pos=>{
-   const lat=pos.coords.latitude;
-   const lng=pos.coords.longitude;
-   const speed=Math.round((pos.coords.speed||0)*3.6);
-   const acc=pos.coords.accuracy;
-   const h=pos.coords.heading;
+  const lat=pos.coords.latitude;
+  const lng=pos.coords.longitude;
+  const speed=Math.round((pos.coords.speed||0)*3.6);
+  const acc=pos.coords.accuracy;
+  const h=pos.coords.heading;
 
-   currentLat=lat;
-   currentLng=lng;
+  currentLat=lat;
+  currentLng=lng;
 
-   if(lastLat!==null&&lastLng!==null){
-     const mv=distanceMeters(lastLat,lastLng,lat,lng);
-     if(mv>4) currentHeading=bearingTo(lastLat,lastLng,lat,lng);
-     else if(h!==null) currentHeading=h;
-   }
+  if(lastLat!==null&&lastLng!==null){
+   const mv=distanceMeters(lastLat,lastLng,lat,lng);
+   if(mv>4)currentHeading=bearingTo(lastLat,lastLng,lat,lng);
+   else if(h!==null)currentHeading=h;
+  }else if(h!==null){
+   currentHeading=h;
+  }
 
-   lastLat=lat;
-   lastLng=lng;
+  lastLat=lat;
+  lastLng=lng;
 
-   updateGPSState(acc);
-   updateStreetName();
-   drawCar(lat,lng,acc,currentHeading);
-   updateTraveledRoute(lat,lng);
-   analyzeSafety(lat,lng,speed,currentHeading);
-   updateTurnByTurn(lat,lng);
-   loadDynamicSafetyPoints(lat,lng);
-
- },()=>{setText("gpsState","GPS İZNİ GEREKLİ");},{
-   enableHighAccuracy:true,
-   maximumAge:1000,
-   timeout:10000
+  updateGPSState(acc);
+  updateStreetName();
+  drawCar(lat,lng,acc,currentHeading);
+  updateTraveledRoute(lat,lng);
+  analyzeSafety(lat,lng,speed,currentHeading);
+  updateTurnByTurn(lat,lng);
+  loadDynamicSafetyPoints(lat,lng);
+ },()=>{
+  setText("gpsState","GPS İZNİ GEREKLİ");
+ },{
+  enableHighAccuracy:true,
+  maximumAge:1000,
+  timeout:10000
  });
+}
+
+async function loadDynamicSafetyPoints(lat,lng){
+ if(Date.now()-lastOSMLoad<60000)return;
+ lastOSMLoad=Date.now();
+
+ try{
+  const d=0.06;
+  const q=`
+  [out:json][timeout:20];
+  (
+   node["highway"="speed_camera"](${lat-d},${lng-d},${lat+d},${lng+d});
+   node["highway"="traffic_signals"](${lat-d},${lng-d},${lat+d},${lng+d});
+   node["highway"="crossing"](${lat-d},${lng-d},${lat+d},${lng+d});
+   node["amenity"="fuel"](${lat-d},${lng-d},${lat+d},${lng+d});
+   node["amenity"="school"](${lat-d},${lng-d},${lat+d},${lng+d});
+   node["highway"="motorway_junction"](${lat-d},${lng-d},${lat+d},${lng+d});
+  );
+  out;
+  `;
+  const r=await fetch("https://overpass-api.de/api/interpreter",{method:"POST",body:q});
+  const json=await r.json();
+
+  const pts=[];
+  json.elements.forEach(n=>{
+   let type="camera",note="Güvenlik noktası",limit=50;
+   if(n.tags.highway==="traffic_signals"){type="danger";note="Trafik ışığı";}
+   if(n.tags.highway==="crossing"){type="school";note="Yaya geçidi";limit=30;}
+   if(n.tags.amenity==="fuel"){type="fuel";note="Benzinlik / mola";}
+   if(n.tags.amenity==="school"){type="school";note="Okul çevresi";limit=30;}
+   if(n.tags.highway==="motorway_junction"){type="danger";note="Kavşak çıkışı";limit=70;}
+   pts.push({name:n.tags.name||note,lat:n.lat,lng:n.lon,type,note,limit});
+  });
+
+  mergeSafetyPoints(pts);
+  drawSafetyPoints();
+ }catch(e){}
+}
+
+function mergeSafetyPoints(pts){
+ const all=[...safetyPoints,...pts];
+ const seen=new Set();
+ safetyPoints=all.filter(p=>{
+  const k=p.type+"-"+p.lat.toFixed(5)+"-"+p.lng.toFixed(5);
+  if(seen.has(k))return false;
+  seen.add(k);
+  return true;
+ });
+}
+
+function drawSafetyPoints(){
+ markerLayer.clearLayers();
+ safetyPoints.forEach(p=>{
+  const color=p.type==="camera"?"#7c4dff":p.type==="school"?"#2878ff":p.type==="fuel"?"#00b894":"#ff273d";
+  const icon=p.type==="camera"?"📷":p.type==="school"?"🎓":p.type==="fuel"?"⛽":"!";
+  const div=L.divIcon({
+   html:`<div style="width:28px;height:28px;border-radius:50%;background:${color};border:3px solid white;display:flex;align-items:center;justify-content:center;font-size:12px;box-shadow:0 0 12px ${color}">${icon}</div>`,
+   className:"",
+   iconSize:[28,28],
+   iconAnchor:[14,14]
+  });
+  L.marker([p.lat,p.lng],{icon:div}).addTo(markerLayer);
+ });
+}
+
+async function updateStreetName(){
+ if(Date.now()-lastStreetLookup<10000)return;
+ lastStreetLookup=Date.now();
+ if(!currentLat||!currentLng)return;
+
+ try{
+  const url=`https://api.tomtom.com/search/2/reverseGeocode/${currentLat},${currentLng}.json?key=${TOMTOM_KEY}&language=tr-TR`;
+  const r=await fetch(url);
+  const d=await r.json();
+  const a=d.addresses?.[0]?.address;
+  setText("streetChip",a?.streetName||a?.freeformAddress||"Yol bilgisi");
+ }catch(e){}
 }
 
 function updateGPSState(acc){
@@ -666,36 +655,22 @@ function updateGPSState(acc){
  e.style.color=c;
 }
 
-async function updateStreetName(){
- if(Date.now()-lastStreetLookup<10000)return;
- lastStreetLookup=Date.now();
- if(!currentLat||!currentLng)return;
-
- try{
-   const u=`https://api.tomtom.com/search/2/reverseGeocode/${currentLat},${currentLng}.json?key=${TOMTOM_KEY}&language=tr-TR`;
-   const r=await fetch(u);
-   const d=await r.json();
-   const a=d.addresses?.[0]?.address;
-   setText("streetChip",a?.streetName||a?.freeformAddress||"Yol bilgisi");
- }catch(e){}
-}
-
 function drawCar(lat,lng,acc,head){
  const ic=L.divIcon({
-   html:`<div class="carCenter" style="transform:rotate(${head}deg)">➤</div>`,
-   className:"",
-   iconSize:[48,48],
-   iconAnchor:[24,24]
+  html:`<div class="carCenter" style="transform:rotate(${head}deg)">➤</div>`,
+  className:"",
+  iconSize:[48,48],
+  iconAnchor:[24,24]
  });
 
  if(!carMarker){
-   carMarker=L.marker([lat,lng],{icon:ic}).addTo(map);
-   accuracyCircle=L.circle([lat,lng],{radius:acc,color:"#00eaff",fillOpacity:.04}).addTo(map);
+  carMarker=L.marker([lat,lng],{icon:ic}).addTo(map);
+  accuracyCircle=L.circle([lat,lng],{radius:acc,color:"#00eaff",fillOpacity:.04}).addTo(map);
  }else{
-   carMarker.setLatLng([lat,lng]);
-   carMarker.setIcon(ic);
-   accuracyCircle.setLatLng([lat,lng]);
-   accuracyCircle.setRadius(acc);
+  carMarker.setLatLng([lat,lng]);
+  carMarker.setIcon(ic);
+  accuracyCircle.setLatLng([lat,lng]);
+  accuracyCircle.setRadius(acc);
  }
 
  map.setView([lat,lng],17,{animate:true});
@@ -712,9 +687,8 @@ function updateTurnByTurn(lat,lng){
  if(!routeInstructions.length||!currentRouteCoords.length)return;
 
  const off=nearestRouteOffsetMeters(lat,lng,currentRouteCoords);
-
  while(nextInstructionIndex<routeInstructions.length-1&&routeInstructions[nextInstructionIndex].distance<off-20){
-   nextInstructionIndex++;
+  nextInstructionIndex++;
  }
 
  const i=routeInstructions[Math.min(nextInstructionIndex,routeInstructions.length-1)];
@@ -725,15 +699,19 @@ function updateTurnByTurn(lat,lng){
  setText("laneText",maneuverIcon(i.maneuver));
 
  if(voiceEnabled&&rem<250&&rem>40){
-   if(Date.now()-lastInstructionVoice>25000){
-     lastInstructionVoice=Date.now();
-     speak(`${Math.round(rem)} metre sonra ${i.message}`);
-   }
+  if(Date.now()-lastInstructionVoice>25000){
+   lastInstructionVoice=Date.now();
+   speak(`${Math.round(rem)} metre sonra ${i.message}`);
+  }
  }
 }
 
 function analyzeSafety(lat,lng,speed,heading){
- if(!safetyPoints.length)return;
+ if(!safetyPoints.length){
+  setText("speed",speed);
+  setText("orbSpeed",speed);
+  return;
+ }
 
  const near=getNearestForward(lat,lng,heading);
  const p=near.point,d=near.distance;
@@ -752,6 +730,9 @@ function analyzeSafety(lat,lng,speed,heading){
  setText("risk",Math.min(100,risk));
  setText("nextPoint","Nokta: "+p.name);
  setText("nextMeter",Math.round(d)+" m");
+ setText("infoTitle",p.name);
+ setText("infoText",p.note+" • Risk "+Math.min(100,risk)+"/100");
+ setText("infoBadge",p.type==="camera"?"📷":p.type==="school"?"🎓":p.type==="fuel"?"⛽":"!");
 
  document.getElementById("progress").style.width=Math.max(5,100-Math.min(100,(d/1500)*100))+"%";
 }
@@ -759,8 +740,8 @@ function analyzeSafety(lat,lng,speed,heading){
 function getNearestForward(lat,lng,heading){
  let best=safetyPoints[0],bd=999999;
  safetyPoints.forEach(p=>{
-   const d=distanceMeters(lat,lng,p.lat,p.lng);
-   if(d<bd){bd=d;best=p;}
+  const d=distanceMeters(lat,lng,p.lat,p.lng);
+  if(d<bd){bd=d;best=p;}
  });
  return{point:best,distance:bd};
 }
@@ -769,17 +750,17 @@ async function toggleCameraAI(){
  if(aiCameraOn){stopCameraAI();return;}
 
  try{
-   const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"},audio:false});
-   document.getElementById("cam").srcObject=stream;
-   document.getElementById("camWrap").style.display="block";
-   aiCameraOn=true;
-   aiLoop=setInterval(runAIDetect,1000);
+  const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"},audio:false});
+  document.getElementById("cam").srcObject=stream;
+  document.getElementById("camWrap").style.display="block";
+  aiCameraOn=true;
+  aiLoop=setInterval(runAIDetect,1000);
  }catch(e){alert("Kamera izni gerekli.");}
 }
 
 function stopCameraAI(){
  const v=document.getElementById("cam");
- if(v.srcObject) v.srcObject.getTracks().forEach(t=>t.stop());
+ if(v.srcObject)v.srcObject.getTracks().forEach(t=>t.stop());
  v.srcObject=null;
  document.getElementById("camWrap").style.display="none";
  clearInterval(aiLoop);
@@ -792,7 +773,6 @@ async function runAIDetect(){
  const video=document.getElementById("cam");
  const canvas=document.getElementById("camCanvas");
  const ctx=canvas.getContext("2d");
-
  canvas.width=video.videoWidth||300;
  canvas.height=video.videoHeight||400;
 
@@ -800,32 +780,109 @@ async function runAIDetect(){
  ctx.clearRect(0,0,canvas.width,canvas.height);
 
  let found=[];
-
  preds.forEach(p=>{
-   if(p.score<0.45)return;
-   if(["traffic light","stop sign","person","car","truck","bus"].includes(p.class)){
-     found.push(p.class);
-     const [x,y,w,h]=p.bbox;
-     ctx.strokeStyle="#00eaff";ctx.lineWidth=3;ctx.strokeRect(x,y,w,h);
-     ctx.fillStyle="#fff";ctx.font="13px Arial";ctx.fillText(p.class,x+3,y-4);
-   }
+  if(p.score<0.45)return;
+  if(["traffic light","stop sign","person","car","truck","bus"].includes(p.class)){
+   found.push(p.class);
+   const [x,y,w,h]=p.bbox;
+   ctx.strokeStyle="#00eaff";
+   ctx.lineWidth=3;
+   ctx.strokeRect(x,y,w,h);
+   ctx.fillStyle="#fff";
+   ctx.font="13px Arial";
+   ctx.fillText(p.class,x+3,y-4);
+  }
  });
 
  setText("camStatus",found.length?"AI: "+[...new Set(found)].join(", "):"AI tarama aktif");
 }
 
-function toggleTraffic(){trafficEnabled=!trafficEnabled;if(trafficEnabled){map.addLayer(trafficLayer);document.getElementById("trafficBtn").classList.add("on")}else{map.removeLayer(trafficLayer);document.getElementById("trafficBtn").classList.remove("on")}}
-function centerCar(){if(currentLat&&currentLng)map.setView([currentLat,currentLng],17,{animate:true})}
-function maneuverIcon(m){const s=(m||"").toLowerCase();if(s.includes("left"))return"Sol";if(s.includes("right"))return"Sağ";if(s.includes("roundabout"))return"Kavşak";return"Düz"}
-function formatMeters(m){return m>=1000?(m/1000).toFixed(1)+" km":Math.round(m)+" m"}
-function distanceMeters(a,b,c,d){const R=6371000,dA=(c-a)*Math.PI/180,dB=(d-b)*Math.PI/180,x=Math.sin(dA/2)**2+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dB/2)**2;return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))}
-function bearingTo(a,b,c,d){const y=Math.sin((d-b)*Math.PI/180)*Math.cos(c*Math.PI/180),x=Math.cos(a*Math.PI/180)*Math.sin(c*Math.PI/180)-Math.sin(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.cos((d-b)*Math.PI/180);return(Math.atan2(y,x)*180/Math.PI+360)%360}
-function nearestRouteOffsetMeters(lat,lng,pts){let bi=0,b=Infinity,total=0,c=[0];for(let i=1;i<pts.length;i++){total+=distanceMeters(pts[i-1][0],pts[i-1][1],pts[i][0],pts[i][1]);c[i]=total}for(let i=0;i<pts.length;i++){const d=distanceMeters(lat,lng,pts[i][0],pts[i][1]);if(d<b){b=d;bi=i}}return c[bi]||0}
-function projectPoint(lat,lng,bearing,meters){const R=6371000,brng=bearing*Math.PI/180,lat1=lat*Math.PI/180,lng1=lng*Math.PI/180,d=meters/R;const lat2=Math.asin(Math.sin(lat1)*Math.cos(d)+Math.cos(lat1)*Math.sin(d)*Math.cos(brng));const lng2=lng1+Math.atan2(Math.sin(brng)*Math.sin(d)*Math.cos(lat1),Math.cos(d)-Math.sin(lat1)*Math.sin(lat2));return[lat2*180/Math.PI,lng2*180/Math.PI]}
-function debounce(fn,delay){let t;return function(...a){clearTimeout(t);t=setTimeout(()=>fn.apply(this,a),delay)}}
-function speak(text){if(!("speechSynthesis"in window))return;const u=new SpeechSynthesisUtterance(text);u.lang="tr-TR";speechSynthesis.cancel();speechSynthesis.speak(u)}
-function setText(id,val){const e=document.getElementById(id);if(e)e.innerText=val}
-function registerOfflineMode(){if("serviceWorker"in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("./sw.js").catch(()=>{})})}}
+function toggleTraffic(){
+ trafficEnabled=!trafficEnabled;
+ if(trafficEnabled){
+  map.addLayer(trafficLayer);
+  document.getElementById("trafficBtn").classList.add("on");
+ }else{
+  map.removeLayer(trafficLayer);
+  document.getElementById("trafficBtn").classList.remove("on");
+ }
+}
+
+function centerCar(){
+ if(currentLat&&currentLng)map.setView([currentLat,currentLng],17,{animate:true});
+ closeAllPanels();
+}
+
+function maneuverIcon(m){
+ const s=(m||"").toLowerCase();
+ if(s.includes("left"))return"Sol";
+ if(s.includes("right"))return"Sağ";
+ if(s.includes("roundabout"))return"Kavşak";
+ return"Düz";
+}
+
+function formatMeters(m){
+ return m>=1000?(m/1000).toFixed(1)+" km":Math.round(m)+" m";
+}
+
+function distanceMeters(a,b,c,d){
+ const R=6371000,dA=(c-a)*Math.PI/180,dB=(d-b)*Math.PI/180;
+ const x=Math.sin(dA/2)**2+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dB/2)**2;
+ return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));
+}
+
+function bearingTo(a,b,c,d){
+ const y=Math.sin((d-b)*Math.PI/180)*Math.cos(c*Math.PI/180);
+ const x=Math.cos(a*Math.PI/180)*Math.sin(c*Math.PI/180)-Math.sin(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.cos((d-b)*Math.PI/180);
+ return(Math.atan2(y,x)*180/Math.PI+360)%360;
+}
+
+function nearestRouteOffsetMeters(lat,lng,pts){
+ let bi=0,b=Infinity,total=0,c=[0];
+ for(let i=1;i<pts.length;i++){
+  total+=distanceMeters(pts[i-1][0],pts[i-1][1],pts[i][0],pts[i][1]);
+  c[i]=total;
+ }
+ for(let i=0;i<pts.length;i++){
+  const d=distanceMeters(lat,lng,pts[i][0],pts[i][1]);
+  if(d<b){b=d;bi=i;}
+ }
+ return c[bi]||0;
+}
+
+function projectPoint(lat,lng,bearing,meters){
+ const R=6371000,brng=bearing*Math.PI/180,lat1=lat*Math.PI/180,lng1=lng*Math.PI/180,d=meters/R;
+ const lat2=Math.asin(Math.sin(lat1)*Math.cos(d)+Math.cos(lat1)*Math.sin(d)*Math.cos(brng));
+ const lng2=lng1+Math.atan2(Math.sin(brng)*Math.sin(d)*Math.cos(lat1),Math.cos(d)-Math.sin(lat1)*Math.sin(lat2));
+ return[lat2*180/Math.PI,lng2*180/Math.PI];
+}
+
+function debounce(fn,delay){
+ let t;
+ return function(...a){
+  clearTimeout(t);
+  t=setTimeout(()=>fn.apply(this,a),delay);
+ };
+}
+
+function speak(text){
+ if(!("speechSynthesis"in window))return;
+ const u=new SpeechSynthesisUtterance(text);
+ u.lang="tr-TR";
+ speechSynthesis.cancel();
+ speechSynthesis.speak(u);
+}
+
+function setText(id,val){
+ const e=document.getElementById(id);
+ if(e)e.innerText=val;
+}
+
+function registerOfflineMode(){
+ if("serviceWorker"in navigator){
+  window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+ }
+}
 
 initMap();
 </script>
