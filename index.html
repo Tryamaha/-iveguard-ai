@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#07111d">
-<title>DriveGuard AI V32 Layout</title>
+<title>DriveGuard AI V33 Dock</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0"></script>
@@ -13,125 +13,154 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{width:100%;height:100%;overflow:hidden;background:#07111d;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+html,body{width:100%;height:100%;overflow:hidden;background:#07111d;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:#fff}
 #map{position:fixed;inset:0;z-index:1}
-#satDim{position:fixed;inset:0;background:rgba(0,0,0,.14);pointer-events:none;z-index:2;display:none}
+#satDim{position:fixed;inset:0;background:rgba(0,0,0,.12);display:none;pointer-events:none;z-index:2}
 
-.glass{background:linear-gradient(135deg,rgba(30,35,55,.88),rgba(15,18,28,.78));backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.08);box-shadow:0 8px 24px rgba(0,0,0,.34)}
+.glass{background:linear-gradient(135deg,rgba(25,30,48,.88),rgba(12,15,25,.78));backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.07);box-shadow:0 8px 24px rgba(0,0,0,.35)}
 
-.topCard{position:fixed;z-index:20;top:calc(env(safe-area-inset-top) + 10px);left:12px;right:12px;border-radius:22px;padding:12px}
-.brand{display:flex;justify-content:space-between;align-items:center;font-size:20px;font-weight:900}
-.ver{background:linear-gradient(135deg,#00d8ff,#126bff);padding:5px 12px;border-radius:999px;font-size:12px}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
-.box{background:rgba(255,255,255,.045);padding:8px 4px;border-radius:14px;text-align:center}
-.box b{display:block;font-size:24px}
-.box span{font-size:10px;color:#bcc7d8}
-.gps{margin-top:8px;font-weight:900;font-size:14px;color:#00ffa0}
-.aiLine{display:flex;gap:8px;align-items:center;margin-top:7px;font-size:13px}
-.aiDot{min-width:30px;height:30px;border-radius:50%;border:2px solid #00d8ff;display:flex;align-items:center;justify-content:center;color:#00d8ff;font-weight:900}
+.topMini{
+ position:fixed;z-index:20;
+ top:calc(env(safe-area-inset-top) + 10px);
+ left:12px;right:12px;
+ border-radius:22px;
+ padding:12px 14px;
+ display:flex;justify-content:space-between;align-items:center;
+}
+.topLeft{display:flex;gap:14px;align-items:center}
+.statNum{font-size:34px;font-weight:900;line-height:1}
+.statLab{font-size:11px;color:#b9c4d8}
+.speedBlock{text-align:center;min-width:70px}
+.streetName{font-size:18px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px}
+.gpsMini{font-size:12px;color:#00ffa0;font-weight:800;margin-top:4px}
 
-.menuGrid{position:fixed;z-index:21;top:calc(env(safe-area-inset-top) + 220px);left:12px;right:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.ctrl{border:none;border-radius:16px;padding:12px 8px;color:#fff;font-weight:900;font-size:13px;background:rgba(15,20,35,.84)}
-.ctrl.primary{background:linear-gradient(90deg,#17d7ff,#1867ff)}
-.ctrl.on{box-shadow:0 0 0 2px rgba(0,255,180,.35) inset}
+.carHud{
+ position:fixed;z-index:18;
+ left:50%;top:50%;
+ transform:translate(-50%,-50%);
+ width:74px;height:74px;border-radius:50%;
+ background:radial-gradient(circle at 35% 35%,#43e6ff,#0630a8);
+ border:4px solid rgba(255,255,255,.9);
+ display:flex;align-items:center;justify-content:center;
+ font-size:34px;
+ box-shadow:0 0 28px rgba(0,234,255,.55);
+}
 
-#streetChip{position:fixed;top:calc(env(safe-area-inset-top) + 412px);left:12px;right:12px;z-index:20;padding:11px 18px;border-radius:999px;text-align:center;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
-#followBtn{position:fixed;left:16px;bottom:320px;z-index:25;width:48px;height:48px;border:none;border-radius:50%;font-size:22px;color:#fff;background:rgba(20,25,40,.85)}
-.speedHud{position:fixed;left:16px;bottom:185px;z-index:20;width:92px;height:92px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 35% 35%,#33dfff,#03152e 65%);box-shadow:0 0 25px rgba(0,234,255,.45);border:3px solid rgba(255,255,255,.2)}
-.speedHud b{font-size:32px}
-.speedHud span{font-size:14px}
-
-.infoCard{position:fixed;left:118px;right:12px;bottom:188px;z-index:20;border-radius:22px;padding:13px 16px;min-height:74px}
+.infoFloat{
+ position:fixed;z-index:19;
+ left:12px;right:12px;
+ bottom:102px;
+ border-radius:20px;
+ padding:13px 16px;
+}
 .infoTitle{font-size:18px;font-weight:900;color:#35d9ff}
-.infoText{font-size:14px;color:#e8eef8;margin-top:4px;padding-right:46px}
-.infoBadge{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:2px solid #ff7c4d;display:flex;align-items:center;justify-content:center;color:#ff7c4d;font-weight:900}
+.infoSub{font-size:14px;color:#e8eef8;margin-top:4px}
 
-.liveFooter{position:fixed;left:12px;right:12px;bottom:12px;z-index:20;border-radius:22px;padding:13px}
-.footerHead,.footerSub{display:flex;justify-content:space-between;align-items:center}
-.footerHead{font-size:17px;font-weight:900}
-.footerSub{font-size:13px;color:#d4dceb;margin-top:8px}
-.trafficDot{width:14px;height:14px;border-radius:50%;background:#00ff70}
-.progressWrap{height:7px;background:rgba(255,255,255,.08);border-radius:99px;margin-top:10px}
-.progress{height:100%;width:5%;background:linear-gradient(90deg,#00d8ff,#ffb300,#ff3344);border-radius:99px}
+.bottomDock{
+ position:fixed;z-index:30;
+ left:10px;right:10px;
+ bottom:10px;
+ border-radius:26px;
+ padding:10px;
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:8px;
+}
+.dockBtn{
+ border:none;
+ border-radius:16px;
+ padding:11px 4px;
+ color:#fff;
+ font-size:12px;
+ font-weight:900;
+ background:rgba(255,255,255,.05);
+}
+.dockBtn.main{
+ background:linear-gradient(90deg,#18d8ff,#1868ff);
+}
+.dockBtn.on{
+ box-shadow:0 0 0 2px rgba(0,255,180,.3) inset;
+}
 
-.sheet{position:fixed;left:12px;right:12px;bottom:112px;z-index:40;border-radius:24px;padding:14px;display:none;max-height:58vh;overflow:auto}
-.sheetHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.sheetTitle{font-size:18px;font-weight:900}
-.sheetActions{display:flex;gap:10px}
-.sheetBack,.sheetClose{width:42px;height:42px;border:none;border-radius:50%;color:#fff;font-size:24px}
-.sheetBack{background:#12182b}.sheetClose{background:#b81f45}
-.input{width:100%;padding:15px;border:none;border-radius:17px;font-size:16px;margin-top:8px}
-.sheetSmall{margin-top:10px;color:#b8c4d8}
-.rowGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.listItem{padding:12px;border-bottom:1px solid rgba(255,255,255,.05);position:relative}
-.itemActions{position:absolute;right:8px;top:10px;display:flex;gap:6px}
-.miniBtn{border:none;border-radius:10px;padding:5px 10px;color:#fff}
+.drawer{
+ position:fixed;
+ left:12px;right:12px;
+ bottom:96px;
+ z-index:40;
+ border-radius:24px 24px 18px 18px;
+ padding:14px;
+ display:none;
+ max-height:46vh;
+ overflow:auto;
+}
+.drawerHead{
+ display:flex;justify-content:space-between;align-items:center;margin-bottom:12px
+}
+.drawerTitle{font-size:18px;font-weight:900}
+.drawerClose{
+ width:42px;height:42px;border:none;border-radius:50%;
+ background:#b8224a;color:#fff;font-size:24px
+}
+.input{
+ width:100%;padding:15px;border:none;border-radius:16px;
+ font-size:16px;margin-top:8px
+}
+.ctrl{
+ width:100%;border:none;border-radius:15px;
+ padding:13px;color:#fff;font-weight:900;font-size:14px;
+ margin-top:10px;background:linear-gradient(90deg,#17d7ff,#1867ff)
+}
+.ctrl2{
+ width:100%;border:none;border-radius:15px;
+ padding:13px;color:#fff;font-weight:900;font-size:14px;
+ margin-top:10px;background:rgba(255,255,255,.06)
+}
+
+.listItem{padding:12px;border-bottom:1px solid rgba(255,255,255,.06);position:relative}
+.itemActions{position:absolute;right:8px;top:8px;display:flex;gap:6px}
+.miniBtn{border:none;border-radius:10px;padding:6px 10px;color:#fff}
 .go{background:#0a84ff}.del{background:#d7264e}
 
-#camWrap{position:fixed;right:12px;bottom:300px;width:190px;height:150px;z-index:25;border-radius:20px;overflow:hidden;display:none;border:3px solid rgba(0,234,255,.4)}
+#camWrap{
+ position:fixed;right:12px;top:calc(env(safe-area-inset-top) + 90px);
+ width:180px;height:140px;z-index:25;
+ border-radius:20px;overflow:hidden;display:none;
+ border:3px solid rgba(0,234,255,.4)
+}
 #cam{width:100%;height:100%;object-fit:cover;background:#000}
 #camCanvas{position:absolute;inset:0}
-#camStatus{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.55);padding:5px 8px;border-radius:10px;font-weight:800;font-size:12px}
-#camClose{position:absolute;right:8px;bottom:8px;width:38px;height:38px;border:none;border-radius:50%;background:#d7264e;color:#fff;font-size:22px}
-
-.carCenter{width:54px;height:54px;border-radius:50%;background:radial-gradient(circle,#79f0ff,#0d63ff);display:flex;align-items:center;justify-content:center;color:white;font-size:24px;border:3px solid white;box-shadow:0 0 18px rgba(0,234,255,.6)}
+#camStatus{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.55);padding:4px 8px;border-radius:10px;font-size:11px;font-weight:800}
+#camClose{position:absolute;right:8px;bottom:8px;width:34px;height:34px;border:none;border-radius:50%;background:#d7264e;color:#fff;font-size:20px}
 </style>
 </head>
-
 <body>
+
 <div id="map"></div>
 <div id="satDim"></div>
 
-<div class="topCard glass">
-  <div class="brand"><span>DriveGuard AI</span><span class="ver">V32</span></div>
-  <div class="stats">
-    <div class="box"><b id="speed">0</b><span>HIZ</span></div>
-    <div class="box"><b id="limit">--</b><span>LİMİT</span></div>
-    <div class="box"><b id="distance">--</b><span>MESAFE</span></div>
-    <div class="box"><b id="risk">0</b><span>RİSK</span></div>
-  </div>
-  <div class="gps" id="gpsState">GPS BEKLENİYOR</div>
-  <div class="aiLine"><div class="aiDot">AI</div><div id="aiText">V32 düzen hazır.</div></div>
+<div class="topMini glass">
+   <div class="topLeft">
+      <div class="speedBlock">
+        <div class="statNum" id="speed">0</div>
+        <div class="statLab">KM/S</div>
+      </div>
+      <div>
+        <div class="streetName" id="streetChip">Yol adı bekleniyor</div>
+        <div class="gpsMini" id="gpsState">GPS BEKLENİYOR</div>
+      </div>
+   </div>
+   <div style="text-align:right">
+      <div style="font-size:14px;font-weight:900" id="nextPoint">Nokta: --</div>
+      <div style="font-size:12px;color:#dce4f0" id="nextMeter">-- m</div>
+   </div>
 </div>
 
-<div class="menuGrid">
-  <button class="ctrl primary" onclick="toggleNavigation()">▶ NAV</button>
-  <button class="ctrl" onclick="openSheet('routeSheet')">🧭 ROTA</button>
-  <button class="ctrl" onclick="openSheet('favSheet')">⭐ FAVORİ</button>
-  <button class="ctrl" onclick="openSheet('safeSheet')">🛡️ GÜVENLİ</button>
-  <button class="ctrl" onclick="openSheet('mapSheet')">🗺️ HARİTA</button>
-  <button class="ctrl" onclick="toggleCameraAI()">📷 AI CAM</button>
-  <button class="ctrl on" id="trafficBtn" onclick="toggleTraffic()">🚦 TRAFİK</button>
-  <button class="ctrl" onclick="centerCar()">⌖ KONUM</button>
-</div>
+<div class="carHud" id="carHud">➤</div>
 
-<div id="streetChip" class="glass">Yol adı bekleniyor</div>
-<button id="followBtn" onclick="centerCar()">⌖</button>
-<div class="speedHud"><b id="orbSpeed">0</b><span>KM/S</span></div>
-
-<div class="infoCard glass">
+<div class="infoFloat glass">
   <div class="infoTitle" id="infoTitle">Hazır</div>
-  <div class="infoText" id="infoText">GPS, rota, trafik ve AI kamera hazır.</div>
-  <div class="infoBadge" id="infoBadge">AI</div>
+  <div class="infoSub" id="infoText">Sade sürüş ekranı aktif.</div>
 </div>
-
-<div class="liveFooter glass">
-  <div class="footerHead">
-    <div style="display:flex;align-items:center;gap:8px">
-      <div class="trafficDot"></div>
-      <div id="trafficText">Canlı veri hazır</div>
-    </div>
-    <div id="trafficLevel">SAFE</div>
-  </div>
-  <div class="footerSub">
-    <div id="laneText">Şerit hazır</div>
-    <div id="nextPoint">Nokta: --</div>
-    <div id="nextMeter">-- m</div>
-  </div>
-  <div class="progressWrap"><div class="progress" id="progress"></div></div>
-</div>
-
 <div id="camWrap">
   <video id="cam" autoplay playsinline muted></video>
   <canvas id="camCanvas"></canvas>
@@ -139,87 +168,63 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07111d;color:#fff;f
   <button id="camClose" onclick="stopCameraAI()">×</button>
 </div>
 
-<div class="sheet glass" id="routeSheet">
-  <div class="sheetHead">
-    <div class="sheetTitle">🧭 Rota Oluştur</div>
-    <div class="sheetActions">
-      <button class="sheetBack" onclick="closeSheet('routeSheet')">‹</button>
-      <button class="sheetClose" onclick="closeSheet('routeSheet')">×</button>
-    </div>
-  </div>
+<div class="bottomDock glass">
+  <button class="dockBtn main" onclick="toggleNavigation()">▶ NAV</button>
+  <button class="dockBtn" onclick="openDrawer('routeDrawer')">🧭 ROTA</button>
+  <button class="dockBtn" onclick="openDrawer('favDrawer')">⭐ FAV</button>
+  <button class="dockBtn" onclick="openDrawer('safeDrawer')">🛡️ SAFE</button>
 
-  <input id="fromInput" class="input" placeholder="Nereden? Mevcut konum / adres">
-  <input id="toInput" class="input" placeholder="Nereye? adres / mekan / şehir">
-
-  <button onclick="searchAndRoute()" class="ctrl primary" style="width:100%;margin-top:10px">GİT</button>
-  <button onclick="saveCurrentAsFavorite()" class="ctrl" style="width:100%;margin-top:10px">⭐ Bu Konumu Favoriye Kaydet</button>
-
-  <div id="fromSuggestions" style="display:none;margin-top:8px;max-height:120px;overflow:auto;background:rgba(0,0,0,.35);border-radius:16px"></div>
-  <div id="toSuggestions" style="display:none;margin-top:8px;max-height:150px;overflow:auto;background:rgba(0,0,0,.35);border-radius:16px"></div>
-
-  <div class="sheetSmall" id="routeInfo">Rota bekleniyor</div>
+  <button class="dockBtn" onclick="openDrawer('mapDrawer')">🗺️ MAP</button>
+  <button class="dockBtn" onclick="toggleCameraAI()">📷 CAM</button>
+  <button class="dockBtn on" id="trafficBtn" onclick="toggleTraffic()">🚦TRF</button>
+  <button class="dockBtn" onclick="centerCar()">⌖LOC</button>
 </div>
 
-<div class="sheet glass" id="favSheet">
-  <div class="sheetHead">
-    <div class="sheetTitle">⭐ Favoriler</div>
-    <div class="sheetActions">
-      <button class="sheetBack" onclick="closeSheet('favSheet')">‹</button>
-      <button class="sheetClose" onclick="closeSheet('favSheet')">×</button>
-    </div>
+<div class="drawer glass" id="routeDrawer">
+  <div class="drawerHead">
+    <div class="drawerTitle">🧭 Rota Oluştur</div>
+    <button class="drawerClose" onclick="closeDrawer('routeDrawer')">×</button>
+  </div>
+  <input id="fromInput" class="input" placeholder="Nereden? mevcut konum / adres">
+  <input id="toInput" class="input" placeholder="Nereye? adres / şehir / mekan">
+  <button class="ctrl" onclick="searchAndRoute()">GİT</button>
+  <button class="ctrl2" onclick="saveCurrentAsFavorite()">⭐ Bu Konumu Favorile</button>
+  <div id="fromSuggestions" style="display:none;margin-top:8px;max-height:120px;overflow:auto;background:rgba(0,0,0,.35);border-radius:16px"></div>
+  <div id="toSuggestions" style="display:none;margin-top:8px;max-height:150px;overflow:auto;background:rgba(0,0,0,.35);border-radius:16px"></div>
+  <div style="margin-top:10px;color:#b8c4d8" id="routeInfo">Rota bekleniyor</div>
+</div>
+
+<div class="drawer glass" id="favDrawer">
+  <div class="drawerHead">
+    <div class="drawerTitle">⭐ Favoriler</div>
+    <button class="drawerClose" onclick="closeDrawer('favDrawer')">×</button>
   </div>
   <div id="favList">Favori yok</div>
 </div>
 
-<div class="sheet glass" id="safeSheet">
-  <div class="sheetHead">
-    <div class="sheetTitle">🛡️ Güvenli Sürüş</div>
-    <div class="sheetActions">
-      <button class="sheetBack" onclick="closeSheet('safeSheet')">‹</button>
-      <button class="sheetClose" onclick="closeSheet('safeSheet')">×</button>
-    </div>
+<div class="drawer glass" id="safeDrawer">
+  <div class="drawerHead">
+    <div class="drawerTitle">🛡️ Güvenli Sürüş</div>
+    <button class="drawerClose" onclick="closeDrawer('safeDrawer')">×</button>
   </div>
 
-  <div class="rowGrid">
-    <button id="shortBtn" class="ctrl on" onclick="setRouteMode('shortest')">Kısa yol</button>
-    <button id="fastBtn" class="ctrl" onclick="setRouteMode('fastest')">Hızlı yol</button>
-    <button id="unpavedBtn" class="ctrl on" onclick="toggleAvoidUnpaved()">Toprak kaçın</button>
-    <button id="satBtn" class="ctrl on" onclick="toggleSatelliteAssist()">Uydu destek</button>
-    <button id="voiceBtn" class="ctrl on" onclick="toggleVoice()">Sesli yön</button>
-    <button id="riskVoiceBtn" class="ctrl on" onclick="toggleRiskVoice()">Risk sesi</button>
-  </div>
+  <button id="voiceBtn" class="ctrl2" onclick="toggleVoice()">Sesli yönlendirme AÇ/KAPAT</button>
+  <button id="riskBtn" class="ctrl2" onclick="toggleRiskVoice()">Risk sesleri AÇ/KAPAT</button>
+  <button id="shortBtn" class="ctrl2" onclick="setRouteMode('shortest')">Kısa rota</button>
+  <button id="fastBtn" class="ctrl2" onclick="setRouteMode('fastest')">Hızlı rota</button>
+  <button id="unpavedBtn" class="ctrl2" onclick="toggleAvoidUnpaved()">Toprak yoldan kaçın</button>
 </div>
 
-<div class="sheet glass" id="mapSheet">
-  <div class="sheetHead">
-    <div class="sheetTitle">🗺️ Harita Tipi</div>
-    <div class="sheetActions">
-      <button class="sheetBack" onclick="closeSheet('mapSheet')">‹</button>
-      <button class="sheetClose" onclick="closeSheet('mapSheet')">×</button>
-    </div>
+<div class="drawer glass" id="mapDrawer">
+  <div class="drawerHead">
+    <div class="drawerTitle">🗺️ Harita</div>
+    <button class="drawerClose" onclick="closeDrawer('mapDrawer')">×</button>
   </div>
 
-  <div class="rowGrid">
-    <button class="ctrl" onclick="setBaseLayer('classic');closeSheet('mapSheet')">Klasik</button>
-    <button class="ctrl" onclick="setBaseLayer('terrain');closeSheet('mapSheet')">Arazi</button>
-    <button class="ctrl" onclick="setBaseLayer('satellite');closeSheet('mapSheet')">Uydu</button>
-    <button class="ctrl" onclick="setBaseLayer('dark');closeSheet('mapSheet')">Gece</button>
-  </div>
-
-  <div class="sheetSmall">Haritayı elle hareket ettirince takip kapanır. ⌖ ile tekrar konuma dönersin.</div>
-</div>
-
-<div class="sheet glass" id="turnSheet">
-  <div class="sheetHead">
-    <div class="sheetTitle" id="navInstruction">Rota takip ediliyor</div>
-    <div class="sheetActions">
-      <button class="sheetBack" onclick="closeSheet('turnSheet')">‹</button>
-      <button class="sheetClose" onclick="closeSheet('turnSheet')">×</button>
-    </div>
-  </div>
-  <div class="sheetSmall" id="navDistance">--</div>
-  <div class="sheetSmall" id="navEta">ETA --</div>
-  <div class="sheetSmall" id="navTraffic">Trafik --</div>
+  <button class="ctrl2" onclick="setBaseLayer('classic')">Klasik Harita</button>
+  <button class="ctrl2" onclick="setBaseLayer('terrain')">Arazi Harita</button>
+  <button class="ctrl2" onclick="setBaseLayer('satellite')">Uydu Harita</button>
+  <button class="ctrl2" onclick="setBaseLayer('dark')">Gece Harita</button>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -227,553 +232,386 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07111d;color:#fff;f
 <script>
 const TOMTOM_KEY="EBqQEtO3y8XtbjCXFuxwqBOLocMz0xrW";
 
-let map,baseLayer,trafficLayer,markerLayer;
+let map,baseLayer,trafficLayer;
 let carMarker,accuracyCircle,targetMarker;
-let navRouteGlow,navRouteLine,navRouteCore,traveledLine,guideLine;
+let navGlow,navLine,navCore;
 
 let currentLat=null,currentLng=null,currentHeading=0,lastLat=null,lastLng=null;
-let watchId=null,navigationActive=false,followMode=false;
+let watchId=null,followMode=false,navigationActive=false;
 
 let voiceEnabled=true,riskVoice=true,trafficEnabled=true;
-let routeMode="shortest",avoidUnpaved=true,satelliteAssist=true;
+let routeMode="shortest",avoidUnpaved=true;
 
-let originPoint=null,currentDestination=null;
-let routeInstructions=[],currentRouteCoords=[],nextInstructionIndex=0;
-let lastInstructionVoice=0,lastStreetLookup=0,lastOSMLoad=0,lastRiskVoice=0;
+let currentDestination=null,originPoint=null;
+let routeInstructions=[],currentRouteCoords=[],nextInstructionIndex=0,lastInstructionVoice=0,lastStreetLookup=0;
 
 let favorites=JSON.parse(localStorage.getItem("driveguard_favorites")||"[]");
-let safetyPoints=[],traveled=[];
+
 let aiModel=null,aiCameraOn=false,aiLoop=null;
 
 const tileLayers={
-  classic:"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-  terrain:"https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
-  satellite:"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-  dark:"https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+ classic:"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+ terrain:"https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+ satellite:"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+ dark:"https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
 };
 
 function initMap(){
-  map=L.map("map",{zoomControl:false,inertia:true}).setView([38.6191,27.4289],14);
+ map=L.map("map",{zoomControl:false,inertia:true}).setView([38.6191,27.4289],14);
+ setBaseLayer("classic");
 
-  setBaseLayer("classic");
+ trafficLayer=L.tileLayer(
+ "https://api.tomtom.com/traffic/map/4/tile/flow/relative0/{z}/{x}/{y}.png?key="+TOMTOM_KEY,
+ {maxZoom:20,opacity:.62}
+ ).addTo(map);
 
-  trafficLayer=L.tileLayer(
-    "https://api.tomtom.com/traffic/map/4/tile/flow/relative0/{z}/{x}/{y}.png?key="+TOMTOM_KEY,
-    {maxZoom:20,opacity:.62}
-  ).addTo(map);
+ navGlow=L.polyline([],{color:"#fff",weight:13,opacity:.25}).addTo(map);
+ navLine=L.polyline([],{color:"#126bff",weight:8,opacity:.88}).addTo(map);
+ navCore=L.polyline([],{color:"#63d9ff",weight:3,opacity:.95}).addTo(map);
 
-  navRouteGlow=L.polyline([],{color:"#fff",weight:13,opacity:.25}).addTo(map);
-  navRouteLine=L.polyline([],{color:"#126bff",weight:8,opacity:.88}).addTo(map);
-  navRouteCore=L.polyline([],{color:"#63d9ff",weight:3,opacity:.95}).addTo(map);
-  traveledLine=L.polyline([],{color:"#00eaff",weight:4,opacity:.95}).addTo(map);
-  guideLine=L.polyline([],{color:"#00eaff",weight:7,opacity:.12}).addTo(map);
-  markerLayer=L.layerGroup().addTo(map);
+ map.on("dragstart zoomstart movestart",()=>{followMode=false;});
 
-  map.on("dragstart zoomstart movestart",()=>{followMode=false;});
-
-  bindSearchSuggest();
-  bindLongPressMap();
-  renderFavorites();
-  preloadAI();
-  registerOfflineMode();
-
-  setText("aiText","V32 tam düzen aktif.");
+ bindSearchSuggest();
+ bindLongPressMap();
+ renderFavorites();
+ preloadAI();
+ registerOfflineMode();
 }
 
-function unlockVoice(){
-  try{
-    const u=new SpeechSynthesisUtterance("Sesli yönlendirme aktif.");
-    u.lang="tr-TR";
-    u.volume=.01;
-    speechSynthesis.cancel();
-    speechSynthesis.speak(u);
-  }catch(e){}
+function openDrawer(id){
+ closeAllDrawers();
+ document.getElementById(id).style.display="block";
 }
-
-function openSheet(id){
-  closeAllSheets();
-  document.getElementById(id).style.display="block";
-}
-
-function closeSheet(id){
-  document.getElementById(id).style.display="none";
-}
-
-function closeAllSheets(){
-  ["routeSheet","favSheet","safeSheet","mapSheet","turnSheet"].forEach(id=>closeSheet(id));
+function closeDrawer(id){document.getElementById(id).style.display="none";}
+function closeAllDrawers(){
+ ["routeDrawer","favDrawer","safeDrawer","mapDrawer"].forEach(i=>closeDrawer(i));
 }
 
 function setBaseLayer(type){
-  if(baseLayer)map.removeLayer(baseLayer);
-  baseLayer=L.tileLayer(tileLayers[type],{maxZoom:20,attribution:""}).addTo(map);
-  document.getElementById("satDim").style.display=type==="satellite"?"block":"none";
-  if(trafficLayer&&trafficEnabled)trafficLayer.addTo(map);
+ if(baseLayer)map.removeLayer(baseLayer);
+ baseLayer=L.tileLayer(tileLayers[type],{maxZoom:20,attribution:""}).addTo(map);
+ document.getElementById("satDim").style.display=type==="satellite"?"block":"none";
+ if(trafficEnabled&&trafficLayer)trafficLayer.addTo(map);
 }
 
 function centerCar(){
-  followMode=true;
-  if(currentLat&&currentLng){
-    map.setView([currentLat,currentLng],17,{animate:true});
-    speak("Araç takibi açıldı.");
-  }
+ followMode=true;
+ if(currentLat&&currentLng)map.setView([currentLat,currentLng],17,{animate:true});
 }
 
-function setRouteMode(mode){
-  routeMode=mode;
-  document.getElementById("shortBtn").classList.toggle("on",mode==="shortest");
-  document.getElementById("fastBtn").classList.toggle("on",mode==="fastest");
-}
-
-function toggleAvoidUnpaved(){
-  avoidUnpaved=!avoidUnpaved;
-  document.getElementById("unpavedBtn").classList.toggle("on",avoidUnpaved);
-}
-
-function toggleSatelliteAssist(){
-  satelliteAssist=!satelliteAssist;
-  document.getElementById("satBtn").classList.toggle("on",satelliteAssist);
-}
-
-function toggleVoice(){
-  voiceEnabled=!voiceEnabled;
-  document.getElementById("voiceBtn").classList.toggle("on",voiceEnabled);
-  if(voiceEnabled){
-    unlockVoice();
-    speak("Sesli yönlendirme aktif.");
-  }
-}
-
-function toggleRiskVoice(){
-  riskVoice=!riskVoice;
-  document.getElementById("riskVoiceBtn").classList.toggle("on",riskVoice);
-}
-
-async function preloadAI(){
-  try{
-    aiModel=await cocoSsd.load();
-    setText("aiText","AI kamera modeli hazır.");
-  }catch(e){
-    setText("aiText","AI modeli yüklenemedi.");
-  }
-}
+function setRouteMode(m){routeMode=m;}
+function toggleAvoidUnpaved(){avoidUnpaved=!avoidUnpaved;}
+function toggleVoice(){voiceEnabled=!voiceEnabled;speak("Sesli yönlendirme değiştirildi");}
+function toggleRiskVoice(){riskVoice=!riskVoice;}
 function bindSearchSuggest(){
-  const from=document.getElementById("fromInput");
-  const to=document.getElementById("toInput");
-
-  from.addEventListener("input",debounce(async function(){
-    const q=this.value.trim();
-    if(q.length<3)return;
-    showSuggestions(await tomtomSearch(q),"fromSuggestions","from");
-  },350));
-
-  to.addEventListener("input",debounce(async function(){
-    const q=this.value.trim();
-    if(q.length<3)return;
-    showSuggestions(await tomtomSearch(q),"toSuggestions","to");
-  },350));
+ const from=document.getElementById("fromInput"),to=document.getElementById("toInput");
+ from.addEventListener("input",debounce(async function(){
+  const q=this.value.trim(); if(q.length<3)return;
+  showSuggestions(await tomtomSearch(q),"fromSuggestions","from");
+ },350));
+ to.addEventListener("input",debounce(async function(){
+  const q=this.value.trim(); if(q.length<3)return;
+  showSuggestions(await tomtomSearch(q),"toSuggestions","to");
+ },350));
 }
 
 async function tomtomSearch(q){
-  const lat=currentLat||38.6191;
-  const lon=currentLng||27.4289;
-  const url=`https://api.tomtom.com/search/2/search/${encodeURIComponent(q)}.json?key=${TOMTOM_KEY}&limit=8&countrySet=TR&language=tr-TR&lat=${lat}&lon=${lon}&radius=300000&typeahead=true&idxSet=POI,PAD,Addr,Geo,Str,XStr`;
-  try{
-    const r=await fetch(url);
-    const d=await r.json();
-    return d.results||[];
-  }catch(e){return[];}
+ const lat=currentLat||38.6191,lon=currentLng||27.4289;
+ const url=`https://api.tomtom.com/search/2/search/${encodeURIComponent(q)}.json?key=${TOMTOM_KEY}&limit=8&countrySet=TR&language=tr-TR&lat=${lat}&lon=${lon}&radius=300000&typeahead=true&idxSet=POI,PAD,Addr,Geo,Str,XStr`;
+ try{const r=await fetch(url);const d=await r.json();return d.results||[];}catch(e){return[];}
 }
 
 function showSuggestions(results,boxId,type){
-  const box=document.getElementById(boxId);
-  box.innerHTML="";
-  if(!results.length){box.style.display="none";return;}
-
-  results.forEach(r=>{
-    const label=r.poi?.name||r.address?.freeformAddress||"Konum";
-    const sub=r.address?.freeformAddress||"";
-    const div=document.createElement("div");
-    div.className="listItem";
-    div.innerHTML=`<b>${label}</b><br><span style="color:#aeb8cc">${sub}</span>`;
-    div.onclick=()=>{
-      const p={lat:r.position.lat,lng:r.position.lon,name:label};
-      if(type==="from"){
-        originPoint=p;
-        document.getElementById("fromInput").value=label;
-      }else{
-        currentDestination=p;
-        document.getElementById("toInput").value=label;
-        setTargetMarker(p);
-      }
-      box.style.display="none";
-    };
-    box.appendChild(div);
-  });
-  box.style.display="block";
+ const box=document.getElementById(boxId); box.innerHTML="";
+ if(!results.length){box.style.display="none";return;}
+ results.forEach(r=>{
+  const label=r.poi?.name||r.address?.freeformAddress||"Konum";
+  const div=document.createElement("div");
+  div.className="listItem";
+  div.innerHTML=`<b>${label}</b><br><span style="color:#aeb8cc">${r.address?.freeformAddress||""}</span>`;
+  div.onclick=()=>{
+   const p={lat:r.position.lat,lng:r.position.lon,name:label};
+   if(type==="from"){originPoint=p;fromInput.value=label;}
+   else{currentDestination=p;toInput.value=label;setTargetMarker(p);}
+   box.style.display="none";
+  };
+  box.appendChild(div);
+ });
+ box.style.display="block";
 }
 
 function bindLongPressMap(){
-  let timer=null;
-  map.on("mousedown touchstart",e=>{
-    timer=setTimeout(()=>{
-      currentDestination={lat:e.latlng.lat,lng:e.latlng.lng,name:"Haritadan Seçilen Nokta"};
-      document.getElementById("toInput").value=currentDestination.name;
-      setTargetMarker(currentDestination);
-      openSheet("routeSheet");
-      speak("Hedef haritadan seçildi.");
-    },800);
-  });
-  map.on("mouseup mouseout touchend",()=>{if(timer)clearTimeout(timer);});
+ let timer=null;
+ map.on("mousedown touchstart",e=>{
+  timer=setTimeout(()=>{
+   currentDestination={lat:e.latlng.lat,lng:e.latlng.lng,name:"Haritadan Seçilen Nokta"};
+   toInput.value=currentDestination.name;
+   setTargetMarker(currentDestination);
+   openDrawer("routeDrawer");
+   speak("Hedef haritadan seçildi.");
+  },800);
+ });
+ map.on("mouseup mouseout touchend",()=>{if(timer)clearTimeout(timer);});
 }
 
 function setTargetMarker(p){
-  if(targetMarker)map.removeLayer(targetMarker);
-  targetMarker=L.marker([p.lat,p.lng],{
-    icon:L.divIcon({
-      html:`<div style="width:36px;height:36px;border-radius:50%;background:#ffb300;border:3px solid white;display:flex;align-items:center;justify-content:center;font-size:17px">⭐</div>`,
-      className:"",
-      iconSize:[36,36],
-      iconAnchor:[18,18]
-    })
-  }).addTo(map);
+ if(targetMarker)map.removeLayer(targetMarker);
+ targetMarker=L.marker([p.lat,p.lng],{
+  icon:L.divIcon({
+   html:`<div style="width:36px;height:36px;border-radius:50%;background:#ffb300;border:3px solid white;display:flex;align-items:center;justify-content:center;font-size:17px">⭐</div>`,
+   className:"",
+   iconSize:[36,36],
+   iconAnchor:[18,18]
+  })
+ }).addTo(map);
 }
 
 async function searchAndRoute(){
-  unlockVoice();
+ if(!currentLat||!currentLng){alert("Önce NAV aç ve konum al.");return;}
+ let dest=currentDestination;
+ if(!dest){
+  const q=toInput.value.trim();
+  if(!q){alert("Hedef gir.");return;}
+  const rs=await tomtomSearch(q);
+  if(!rs.length){alert("Hedef bulunamadı.");return;}
+  dest={lat:rs[0].position.lat,lng:rs[0].position.lon,name:rs[0].poi?.name||rs[0].address?.freeformAddress||q};
+  currentDestination=dest;
+  setTargetMarker(dest);
+ }
 
-  if(!currentLat||!currentLng){
-    alert("Önce NAV aç ve konum al.");
-    return;
-  }
+ const start=originPoint||{lat:currentLat,lng:currentLng,name:"Mevcut konum"};
+ const avoid=avoidUnpaved?"&avoid=unpavedRoads":"";
+ const url=`https://api.tomtom.com/routing/1/calculateRoute/${start.lat},${start.lng}:${dest.lat},${dest.lng}/json?key=${TOMTOM_KEY}&traffic=true&travelMode=car&routeType=${routeMode}${avoid}&instructionsType=text&language=tr-TR`;
 
-  let dest=currentDestination;
+ try{
+  const r=await fetch(url);
+  const d=await r.json();
+  if(!d.routes||!d.routes.length){alert("Rota bulunamadı.");return;}
 
-  if(!dest){
-    const q=document.getElementById("toInput").value.trim();
-    if(!q){alert("Hedef gir.");return;}
+  const route=d.routes[0];
+  const pts=route.legs[0].points.map(p=>[p.latitude,p.longitude]);
+  currentRouteCoords=pts;
+  navGlow.setLatLngs(pts);
+  navLine.setLatLngs(pts);
+  navCore.setLatLngs(pts);
 
-    const rs=await tomtomSearch(q);
-    if(!rs.length){alert("Hedef bulunamadı.");return;}
+  routeInstructions=(route.guidance?.instructions||[]).map(i=>({
+   message:i.message,
+   distance:i.routeOffsetInMeters
+  }));
+  nextInstructionIndex=0;
 
-    dest={
-      lat:rs[0].position.lat,
-      lng:rs[0].position.lon,
-      name:rs[0].poi?.name||rs[0].address?.freeformAddress||q
-    };
-    currentDestination=dest;
-    setTargetMarker(dest);
-  }
+  const sum=route.summary;
+  const km=(sum.lengthInMeters/1000).toFixed(1);
+  const min=Math.round(sum.travelTimeInSeconds/60);
 
-  const start=originPoint||{lat:currentLat,lng:currentLng,name:"Mevcut konum"};
-  const avoid=avoidUnpaved?"&avoid=unpavedRoads":"";
-  const url=`https://api.tomtom.com/routing/1/calculateRoute/${start.lat},${start.lng}:${dest.lat},${dest.lng}/json?key=${TOMTOM_KEY}&traffic=true&travelMode=car&routeType=${routeMode}${avoid}&instructionsType=text&language=tr-TR`;
+  setText("infoTitle","Rota hazır");
+  setText("infoText",`${dest.name} • ${km} km • ${min} dk`);
+  setText("routeInfo",`${dest.name} • ${km} km • ${min} dk`);
 
-  try{
-    const r=await fetch(url);
-    const d=await r.json();
-
-    if(!d.routes||!d.routes.length){
-      alert("Rota bulunamadı.");
-      return;
-    }
-
-    const route=d.routes[0];
-    const pts=route.legs[0].points.map(p=>[p.latitude,p.longitude]);
-
-    currentRouteCoords=pts;
-    navRouteGlow.setLatLngs(pts);
-    navRouteLine.setLatLngs(pts);
-    navRouteCore.setLatLngs(pts);
-
-    routeInstructions=(route.guidance?.instructions||[]).map(i=>({
-      message:i.message,
-      distance:i.routeOffsetInMeters
-    }));
-    nextInstructionIndex=0;
-
-    const sum=route.summary;
-    const km=(sum.lengthInMeters/1000).toFixed(1);
-    const min=Math.round(sum.travelTimeInSeconds/60);
-    const eta=new Date(Date.now()+sum.travelTimeInSeconds*1000).toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"});
-
-    setText("routeInfo",`${dest.name} • ${km} km • ${min} dk`);
-    setText("navEta",`ETA ${eta} • ${km} km • ${min} dk`);
-    setText("navTraffic",routeMode==="shortest"?"Kısa rota":"Hızlı rota");
-    setText("infoTitle","Rota hazır");
-    setText("infoText",`${dest.name} • ${km} km • ${min} dk`);
-    setText("infoBadge","🧭");
-
-    closeAllSheets();
-    openSheet("turnSheet");
-    followMode=false;
-    map.fitBounds(navRouteLine.getBounds(),{padding:[50,50]});
-    speak(`Rota oluşturuldu. Yaklaşık ${min} dakika.`);
-  }catch(e){
-    alert("Rota servisi bağlantı hatası.");
-  }
+  closeAllDrawers();
+  map.fitBounds(navLine.getBounds(),{padding:[50,50]});
+  followMode=false;
+  speak(`Rota oluşturuldu. Yaklaşık ${min} dakika.`);
+ }catch(e){alert("Rota servisi bağlantı hatası.");}
 }
 
 function toggleNavigation(){
-  unlockVoice();
-  navigationActive=!navigationActive;
-
-  if(!navigationActive){
-    if(watchId!==null){
-      navigator.geolocation.clearWatch(watchId);
-      watchId=null;
-    }
-    setText("gpsState","GPS DURDU");
-    speak("Navigasyon durduruldu.");
-    return;
-  }
-
-  startDrive();
+ navigationActive=!navigationActive;
+ if(!navigationActive){
+  if(watchId!==null){navigator.geolocation.clearWatch(watchId);watchId=null;}
+  setText("gpsState","GPS DURDU");
+  speak("Navigasyon durduruldu.");
+  return;
+ }
+ startDrive();
 }
 
 function startDrive(){
-  if(!navigator.geolocation){
-    alert("GPS desteklenmiyor.");
-    return;
-  }
+ if(!navigator.geolocation){alert("GPS desteklenmiyor.");return;}
+ followMode=true;
+ originPoint=null;
+ fromInput.value="Mevcut konum";
+ setText("gpsState","GPS ARANIYOR...");
 
-  followMode=true;
-  originPoint=null;
-  setText("gpsState","GPS ARANIYOR...");
-  document.getElementById("fromInput").value="Mevcut konum";
+ navigator.geolocation.getCurrentPosition(pos=>{
+  currentLat=pos.coords.latitude;
+  currentLng=pos.coords.longitude;
+  currentHeading=pos.coords.heading||0;
+  updateGPSState(pos.coords.accuracy);
+  drawCar(currentLat,currentLng,pos.coords.accuracy,currentHeading);
+  updateStreetName();
+  speak("Konum alındı.");
+ },()=>setText("gpsState","GPS İZNİ GEREKLİ"),{enableHighAccuracy:true,maximumAge:0,timeout:12000});
 
-  navigator.geolocation.getCurrentPosition(pos=>{
-    currentLat=pos.coords.latitude;
-    currentLng=pos.coords.longitude;
-    currentHeading=pos.coords.heading||0;
+ if(watchId!==null)return;
+ watchId=navigator.geolocation.watchPosition(pos=>{
+  const lat=pos.coords.latitude,lng=pos.coords.longitude;
+  const speed=Math.round((pos.coords.speed||0)*3.6);
+  const acc=pos.coords.accuracy,h=pos.coords.heading;
 
-    updateGPSState(pos.coords.accuracy);
-    drawCar(currentLat,currentLng,pos.coords.accuracy,currentHeading);
-    updateStreetName();
-    speak("Konum alındı.");
-  },()=>{
-    setText("gpsState","GPS İZNİ GEREKLİ");
-  },{enableHighAccuracy:true,maximumAge:0,timeout:12000});
+  currentLat=lat; currentLng=lng;
+  if(lastLat!==null&&lastLng!==null){
+   const mv=distanceMeters(lastLat,lastLng,lat,lng);
+   if(mv>4)currentHeading=bearingTo(lastLat,lastLng,lat,lng);
+   else if(h!==null)currentHeading=h;
+  }else if(h!==null)currentHeading=h;
 
-  if(watchId!==null)return;
-
-  watchId=navigator.geolocation.watchPosition(pos=>{
-    const lat=pos.coords.latitude;
-    const lng=pos.coords.longitude;
-    const speed=Math.round((pos.coords.speed||0)*3.6);
-    const acc=pos.coords.accuracy;
-    const h=pos.coords.heading;
-
-    currentLat=lat;
-    currentLng=lng;
-
-    if(lastLat!==null&&lastLng!==null){
-      const mv=distanceMeters(lastLat,lastLng,lat,lng);
-      if(mv>4)currentHeading=bearingTo(lastLat,lastLng,lat,lng);
-      else if(h!==null)currentHeading=h;
-    }else if(h!==null){
-      currentHeading=h;
-    }
-
-    lastLat=lat;
-    lastLng=lng;
-
-    updateGPSState(acc);
-    updateStreetName();
-    drawCar(lat,lng,acc,currentHeading);
-    updateTraveledRoute(lat,lng);
-    updateTurnByTurn(lat,lng);
-    analyzeSafety(lat,lng,speed);
-    loadDynamicSafetyPoints(lat,lng);
-  },()=>{
-    setText("gpsState","GPS İZNİ GEREKLİ");
-  },{enableHighAccuracy:true,maximumAge:1000,timeout:10000});
+  lastLat=lat; lastLng=lng;
+  updateGPSState(acc);
+  drawCar(lat,lng,acc,currentHeading);
+  updateStreetName();
+  updateTurnByTurn(lat,lng);
+  setText("speed",speed);
+ },()=>setText("gpsState","GPS İZNİ GEREKLİ"),{enableHighAccuracy:true,maximumAge:1000,timeout:10000});
 }
 
 function drawCar(lat,lng,acc,head){
-  const icon=L.divIcon({
-    html:`<div class="carCenter" style="transform:rotate(${head}deg)">➤</div>`,
-    className:"",
-    iconSize:[54,54],
-    iconAnchor:[27,27]
-  });
-
-  if(!carMarker){
-    carMarker=L.marker([lat,lng],{icon}).addTo(map);
-    accuracyCircle=L.circle([lat,lng],{radius:acc,color:"#00eaff",fillOpacity:.04}).addTo(map);
-  }else{
-    carMarker.setLatLng([lat,lng]);
-    carMarker.setIcon(icon);
-    accuracyCircle.setLatLng([lat,lng]);
-    accuracyCircle.setRadius(acc);
-  }
-
-  if(followMode){
-    map.setView([lat,lng],17,{animate:true});
-  }
+ document.getElementById("carHud").style.transform=`translate(-50%,-50%) rotate(${head}deg)`;
+ if(!carMarker){
+  carMarker=L.marker([lat,lng],{opacity:0}).addTo(map);
+  accuracyCircle=L.circle([lat,lng],{radius:acc,color:"#00eaff",fillOpacity:.04}).addTo(map);
+ }else{
+  carMarker.setLatLng([lat,lng]);
+  accuracyCircle.setLatLng([lat,lng]);
+  accuracyCircle.setRadius(acc);
+ }
+ if(followMode)map.setView([lat,lng],17,{animate:true});
 }
 
 async function updateStreetName(){
-  if(Date.now()-lastStreetLookup<9000)return;
-  lastStreetLookup=Date.now();
-  if(!currentLat||!currentLng)return;
-
-  try{
-    const r=await fetch(`https://api.tomtom.com/search/2/reverseGeocode/${currentLat},${currentLng}.json?key=${TOMTOM_KEY}&language=tr-TR`);
-    const d=await r.json();
-    const a=d.addresses?.[0]?.address;
-    const t=a?.streetName||a?.freeformAddress||"Mevcut konum";
-    setText("streetChip",t);
-    if(!originPoint)document.getElementById("fromInput").value=t;
-  }catch(e){}
+ if(Date.now()-lastStreetLookup<9000)return;
+ lastStreetLookup=Date.now();
+ if(!currentLat||!currentLng)return;
+ try{
+  const r=await fetch(`https://api.tomtom.com/search/2/reverseGeocode/${currentLat},${currentLng}.json?key=${TOMTOM_KEY}&language=tr-TR`);
+  const d=await r.json();
+  const a=d.addresses?.[0]?.address;
+  const t=a?.streetName||a?.freeformAddress||"Mevcut konum";
+  setText("streetChip",t);
+  if(!originPoint)fromInput.value=t;
+ }catch(e){}
 }
 
 function updateGPSState(acc){
-  let txt="GPS CANLI",c="#00ff9d";
-  if(acc>35){txt="GPS ZAYIF";c="#ffb300";}
-  if(acc>75){txt="GPS BEKLENİYOR";c="#ff7845";}
-  const el=document.getElementById("gpsState");
-  el.innerText=txt+" • ±"+Math.round(acc)+"m";
-  el.style.color=c;
-}
-
-function updateTraveledRoute(lat,lng){
-  traveled.push([lat,lng]);
-  if(traveled.length>250)traveled.shift();
-  traveledLine.setLatLngs(traveled);
-  guideLine.setLatLngs([[lat,lng],projectPoint(lat,lng,currentHeading,220)]);
+ let txt="GPS CANLI",c="#00ff9d";
+ if(acc>35){txt="GPS ZAYIF";c="#ffb300";}
+ if(acc>75){txt="GPS BEKLENİYOR";c="#ff7845";}
+ const el=document.getElementById("gpsState");
+ el.innerText=txt+" • ±"+Math.round(acc)+"m";
+ el.style.color=c;
 }
 
 function updateTurnByTurn(lat,lng){
-  if(!routeInstructions.length||!currentRouteCoords.length)return;
-
-  const off=nearestRouteOffsetMeters(lat,lng,currentRouteCoords);
-
-  while(nextInstructionIndex<routeInstructions.length-1&&routeInstructions[nextInstructionIndex].distance<off-20){
-    nextInstructionIndex++;
-  }
-
-  const i=routeInstructions[Math.min(nextInstructionIndex,routeInstructions.length-1)];
-  const rem=Math.max(0,i.distance-off);
-
-  setText("navInstruction",i.message||"Rota takip");
-  setText("navDistance",formatMeters(rem));
-
-  if(voiceEnabled&&rem<350&&rem>40&&Date.now()-lastInstructionVoice>26000){
-    lastInstructionVoice=Date.now();
-    speak(`${Math.round(rem)} metre sonra ${i.message}`);
-  }
-}
-
-function analyzeSafety(lat,lng,speed){
-  setText("speed",speed);
-  setText("orbSpeed",speed);
-}
-
-async function loadDynamicSafetyPoints(lat,lng){
-  // UI performans için V32’de hafif mod
+ if(!routeInstructions.length||!currentRouteCoords.length)return;
+ const off=nearestRouteOffsetMeters(lat,lng,currentRouteCoords);
+ while(nextInstructionIndex<routeInstructions.length-1&&routeInstructions[nextInstructionIndex].distance<off-20)nextInstructionIndex++;
+ const i=routeInstructions[Math.min(nextInstructionIndex,routeInstructions.length-1)];
+ const rem=Math.max(0,i.distance-off);
+ setText("infoTitle",i.message||"Rota takip");
+ setText("infoText",formatMeters(rem));
+ if(voiceEnabled&&rem<350&&rem>40&&Date.now()-lastInstructionVoice>26000){
+  lastInstructionVoice=Date.now();
+  speak(`${Math.round(rem)} metre sonra ${i.message}`);
+ }
 }
 
 function saveCurrentAsFavorite(){
-  if(!currentLat)return;
-  const name=prompt("Favori adı:",document.getElementById("streetChip").innerText||"Favori");
-  if(!name)return;
-  favorites.push({name,lat:currentLat,lng:currentLng});
-  localStorage.setItem("driveguard_favorites",JSON.stringify(favorites));
-  renderFavorites();
+ if(!currentLat)return;
+ const name=prompt("Favori adı:",streetChip.innerText||"Favori");
+ if(!name)return;
+ favorites.push({name,lat:currentLat,lng:currentLng});
+ localStorage.setItem("driveguard_favorites",JSON.stringify(favorites));
+ renderFavorites();
 }
 
 function renderFavorites(){
-  const box=document.getElementById("favList");
-  if(!favorites.length){box.innerHTML="Favori yok";return;}
-  box.innerHTML="";
-  favorites.forEach((f,i)=>{
-    const div=document.createElement("div");
-    div.className="listItem";
-    div.innerHTML=`<b>${f.name}</b><div class="itemActions"><button class="miniBtn go" onclick="routeToFavorite(${i})">Git</button><button class="miniBtn del" onclick="deleteFavorite(${i})">Sil</button></div>`;
-    box.appendChild(div);
-  });
+ const box=document.getElementById("favList");
+ if(!favorites.length){box.innerHTML="Favori yok";return;}
+ box.innerHTML="";
+ favorites.forEach((f,i)=>{
+  const div=document.createElement("div");
+  div.className="listItem";
+  div.innerHTML=`<b>${f.name}</b><div class="itemActions"><button class="miniBtn go" onclick="routeToFavorite(${i})">Git</button><button class="miniBtn del" onclick="deleteFavorite(${i})">Sil</button></div>`;
+  box.appendChild(div);
+ });
 }
 
 function routeToFavorite(i){
-  currentDestination=favorites[i];
-  document.getElementById("toInput").value=currentDestination.name;
-  setTargetMarker(currentDestination);
-  closeAllSheets();
-  openSheet("routeSheet");
+ currentDestination=favorites[i];
+ toInput.value=currentDestination.name;
+ setTargetMarker(currentDestination);
+ closeAllDrawers();
+ openDrawer("routeDrawer");
 }
 
 function deleteFavorite(i){
-  favorites.splice(i,1);
-  localStorage.setItem("driveguard_favorites",JSON.stringify(favorites));
-  renderFavorites();
+ favorites.splice(i,1);
+ localStorage.setItem("driveguard_favorites",JSON.stringify(favorites));
+ renderFavorites();
 }
 
 function toggleTraffic(){
-  trafficEnabled=!trafficEnabled;
-  if(trafficEnabled){
-    map.addLayer(trafficLayer);
-    document.getElementById("trafficBtn").classList.add("on");
-  }else{
-    map.removeLayer(trafficLayer);
-    document.getElementById("trafficBtn").classList.remove("on");
-  }
+ trafficEnabled=!trafficEnabled;
+ if(trafficEnabled){
+  map.addLayer(trafficLayer);
+  trafficBtn.classList.add("on");
+ }else{
+  map.removeLayer(trafficLayer);
+  trafficBtn.classList.remove("on");
+ }
 }
 
 async function toggleCameraAI(){
-  if(aiCameraOn){stopCameraAI();return;}
-  try{
-    const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"},audio:false});
-    document.getElementById("cam").srcObject=stream;
-    document.getElementById("camWrap").style.display="block";
-    setText("camStatus","AI Kamera Aktif");
-    aiCameraOn=true;
-    aiLoop=setInterval(runAIDetect,1000);
-  }catch(e){
-    alert("Kamera izni gerekli.");
-  }
+ if(aiCameraOn){stopCameraAI();return;}
+ try{
+  const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"},audio:false});
+  cam.srcObject=stream;
+  camWrap.style.display="block";
+  setText("camStatus","AI Kamera Aktif");
+  aiCameraOn=true;
+  aiLoop=setInterval(runAIDetect,1000);
+ }catch(e){alert("Kamera izni gerekli.");}
 }
 
 function stopCameraAI(){
-  const v=document.getElementById("cam");
-  if(v.srcObject)v.srcObject.getTracks().forEach(t=>t.stop());
-  v.srcObject=null;
-  document.getElementById("camWrap").style.display="none";
-  clearInterval(aiLoop);
-  aiCameraOn=false;
-  setText("camStatus","AI Kamera Kapalı");
+ if(cam.srcObject)cam.srcObject.getTracks().forEach(t=>t.stop());
+ cam.srcObject=null;
+ camWrap.style.display="none";
+ clearInterval(aiLoop);
+ aiCameraOn=false;
+ setText("camStatus","AI Kamera Kapalı");
 }
 
 async function runAIDetect(){
-  if(!aiModel||!aiCameraOn)return;
-  const video=document.getElementById("cam");
-  const canvas=document.getElementById("camCanvas");
-  const ctx=canvas.getContext("2d");
-  canvas.width=video.videoWidth||300;
-  canvas.height=video.videoHeight||200;
-  const preds=await aiModel.detect(video);
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  preds.forEach(p=>{
-    if(p.score<.45)return;
-    if(["traffic light","stop sign","person","car","truck","bus"].includes(p.class)){
-      const [x,y,w,h]=p.bbox;
-      ctx.strokeStyle="#00eaff";
-      ctx.lineWidth=3;
-      ctx.strokeRect(x,y,w,h);
-    }
-  });
-  setText("camStatus","AI tarama aktif");
+ if(!aiModel||!aiCameraOn)return;
+ const canvas=camCanvas,ctx=canvas.getContext("2d");
+ canvas.width=cam.videoWidth||300;
+ canvas.height=cam.videoHeight||200;
+ const preds=await aiModel.detect(cam);
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+ preds.forEach(p=>{
+  if(p.score<.45)return;
+  if(["traffic light","stop sign","person","car","truck","bus"].includes(p.class)){
+   const [x,y,w,h]=p.bbox;
+   ctx.strokeStyle="#00eaff";ctx.lineWidth=3;ctx.strokeRect(x,y,w,h);
+  }
+ });
+ setText("camStatus","AI tarama aktif");
 }
 
-function formatMeters(m){return m>=1000?(m/1000).toFixed(1)+" km":Math.round(m)+" m";}
-function distanceMeters(a,b,c,d){const R=6371000,dA=(c-a)*Math.PI/180,dB=(d-b)*Math.PI/180,x=Math.sin(dA/2)**2+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dB/2)**2;return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));}
-function bearingTo(a,b,c,d){const y=Math.sin((d-b)*Math.PI/180)*Math.cos(c*Math.PI/180),x=Math.cos(a*Math.PI/180)*Math.sin(c*Math.PI/180)-Math.sin(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.cos((d-b)*Math.PI/180);return(Math.atan2(y,x)*180/Math.PI+360)%360;}
-function nearestRouteOffsetMeters(lat,lng,pts){let bi=0,b=Infinity,total=0,c=[0];for(let i=1;i<pts.length;i++){total+=distanceMeters(pts[i-1][0],pts[i-1][1],pts[i][0],pts[i][1]);c[i]=total}for(let i=0;i<pts.length;i++){const d=distanceMeters(lat,lng,pts[i][0],pts[i][1]);if(d<b){b=d;bi=i}}return c[bi]||0;}
-function projectPoint(lat,lng,bearing,meters){const R=6371000,brng=bearing*Math.PI/180,lat1=lat*Math.PI/180,lng1=lng*Math.PI/180,d=meters/R;const lat2=Math.asin(Math.sin(lat1)*Math.cos(d)+Math.cos(lat1)*Math.sin(d)*Math.cos(brng));const lng2=lng1+Math.atan2(Math.sin(brng)*Math.sin(d)*Math.cos(lat1),Math.cos(d)-Math.sin(lat1)*Math.sin(lat2));return[lat2*180/Math.PI,lng2*180/Math.PI];}
+async function preloadAI(){
+ try{aiModel=await cocoSsd.load();}catch(e){}
+}
+
+function formatMeters(m){return m>=1000?(m/1000).toFixed(1)+" km":Math.round(m)+" m"}
+function distanceMeters(a,b,c,d){const R=6371000,dA=(c-a)*Math.PI/180,dB=(d-b)*Math.PI/180,x=Math.sin(dA/2)**2+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dB/2)**2;return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))}
+function bearingTo(a,b,c,d){const y=Math.sin((d-b)*Math.PI/180)*Math.cos(c*Math.PI/180),x=Math.cos(a*Math.PI/180)*Math.sin(c*Math.PI/180)-Math.sin(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.cos((d-b)*Math.PI/180);return(Math.atan2(y,x)*180/Math.PI+360)%360}
+function nearestRouteOffsetMeters(lat,lng,pts){let bi=0,b=Infinity,total=0,c=[0];for(let i=1;i<pts.length;i++){total+=distanceMeters(pts[i-1][0],pts[i-1][1],pts[i][0],pts[i][1]);c[i]=total}for(let i=0;i<pts.length;i++){const d=distanceMeters(lat,lng,pts[i][0],pts[i][1]);if(d<b){b=d;bi=i}}return c[bi]||0}
 function debounce(fn,delay){let t;return function(...a){clearTimeout(t);t=setTimeout(()=>fn.apply(this,a),delay)}}
-function speak(text){if(!voiceEnabled||!("speechSynthesis"in window))return;const u=new SpeechSynthesisUtterance(text);u.lang="tr-TR";u.rate=.95;speechSynthesis.cancel();speechSynthesis.speak(u);}
-function setText(id,val){const e=document.getElementById(id);if(e)e.innerText=val;}
-function registerOfflineMode(){if("serviceWorker"in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}}
+function speak(text){if(!voiceEnabled||!("speechSynthesis"in window))return;const u=new SpeechSynthesisUtterance(text);u.lang="tr-TR";u.rate=.95;speechSynthesis.cancel();speechSynthesis.speak(u)}
+function setText(id,val){const e=document.getElementById(id);if(e)e.innerText=val}
+function registerOfflineMode(){if("serviceWorker"in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}))}}
 
 initMap();
 </script>
