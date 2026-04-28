@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#06101d">
-<title>DriveGuard AI V20 Ultra Native</title>
+<title>DriveGuard AI V21 Cinematic Native</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
@@ -16,21 +16,22 @@ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
 }
 #map{
 position:fixed;inset:0;z-index:1;
-filter:brightness(1.08) contrast(1.08) saturate(1.08);
+filter:brightness(1.06) contrast(1.08) saturate(1.06);
+transform-origin:center center;
+transition:transform .8s ease;
 }
 .mapShade{
 position:fixed;inset:0;z-index:2;pointer-events:none;
 background:
-radial-gradient(circle at center,rgba(0,0,0,0) 20%,rgba(0,0,0,.18) 100%),
-linear-gradient(to bottom,rgba(0,0,0,.04),transparent,rgba(0,0,0,.22));
+radial-gradient(circle at center,rgba(0,0,0,0) 20%,rgba(0,0,0,.20) 100%),
+linear-gradient(to bottom,rgba(0,0,0,.04),transparent,rgba(0,0,0,.24));
 }
 .satDim{
 position:fixed;inset:0;z-index:3;pointer-events:none;
-background:rgba(0,0,0,.12);
-display:none;
+background:rgba(0,0,0,.14);display:none;
 }
 .glass{
-background:linear-gradient(145deg,rgba(8,15,30,.74),rgba(3,7,18,.58));
+background:linear-gradient(145deg,rgba(8,15,30,.76),rgba(3,7,18,.60));
 backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
 border:1px solid rgba(150,190,255,.14);
 box-shadow:0 10px 30px rgba(0,0,0,.32);
@@ -49,24 +50,15 @@ font-size:8px;padding:4px 7px;border-radius:999px;
 background:linear-gradient(135deg,#00eaff,#245bff);
 font-weight:950;
 }
-.metrics{
-display:grid;grid-template-columns:repeat(4,1fr);
-gap:4px;margin-top:7px;
-}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:7px}
 .metric{
-padding:5px 2px;border-radius:11px;
-background:rgba(255,255,255,.04);
-border:1px solid rgba(255,255,255,.08);
-text-align:center;
+padding:5px 2px;border-radius:11px;background:rgba(255,255,255,.04);
+border:1px solid rgba(255,255,255,.08);text-align:center;
 }
 .metric b{font-size:15px;display:block}
 .metric span{font-size:7px;color:#cbd8f0;font-weight:800}
-.gpsLine{
-margin-top:5px;font-size:9px;font-weight:950;color:#00ff9d;
-}
-.aiRow{
-margin-top:6px;font-size:9.5px;display:flex;gap:6px;line-height:1.2;
-}
+.gpsLine{margin-top:5px;font-size:9px;font-weight:950;color:#00ff9d}
+.aiRow{margin-top:6px;font-size:9.5px;display:flex;gap:6px;line-height:1.2}
 .aiIcon{
 min-width:23px;height:23px;border-radius:50%;
 display:flex;align-items:center;justify-content:center;
@@ -88,50 +80,28 @@ color:#fff;font-size:9.5px;font-weight:950;
 .ctrl.primary{background:linear-gradient(135deg,#00eaff,#125cff)}
 .ctrl.on{background:linear-gradient(135deg,#00c853,#00eaff)}
 
-.layerBar{
-position:absolute;z-index:24;
+.searchBar{
+position:absolute;z-index:25;
 top:calc(env(safe-area-inset-top) + 172px);
-left:8px;right:8px;
-display:none;grid-template-columns:repeat(4,1fr);gap:6px;
-}
-.layerBar button{
-border:0;border-radius:13px;padding:10px 3px;
-color:#fff;font-size:10px;font-weight:900;
-background:rgba(3,7,18,.78);
-border:1px solid rgba(255,255,255,.13);
-}
-
-.streetChip{
-position:absolute;z-index:26;
-top:calc(env(safe-area-inset-top) + 172px);
-left:72px;right:118px;
-border-radius:999px;padding:7px 10px;
-font-size:10px;font-weight:950;text-align:center;
-white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-
-.routeBox{
-position:absolute;z-index:23;
-top:calc(env(safe-area-inset-top) + 214px);
 left:8px;right:8px;
 border-radius:18px;padding:8px;display:none;
 }
-.routeInputs{
-display:grid;grid-template-columns:1fr 1fr 60px;gap:6px;
+.searchRow{
+display:grid;grid-template-columns:1fr 1fr 58px;gap:6px;
 }
-.routeInputs input{
+.searchRow input{
 height:36px;border:0;border-radius:12px;padding:0 10px;
-background:rgba(255,255,255,.92);color:#111;
+background:rgba(255,255,255,.94);color:#111;
 font-size:11px;font-weight:700;
 }
-.routeInputs button{
+.searchRow button{
 border:0;border-radius:12px;
 background:linear-gradient(135deg,#00eaff,#125cff);
-color:white;font-weight:950;font-size:11px;
+color:#fff;font-size:11px;font-weight:950;
 }
-.routeSummary{
-margin-top:7px;font-size:11px;color:#e7ecff;
-display:flex;justify-content:space-between;gap:8px;
+.searchMeta{
+margin-top:7px;font-size:10px;color:#dce8ff;
+display:flex;justify-content:space-between;
 }
 .suggestions{
 display:none;margin-top:6px;max-height:120px;overflow:auto;
@@ -142,32 +112,36 @@ border:1px solid rgba(255,255,255,.10);
 padding:8px;border-bottom:1px solid rgba(255,255,255,.06);font-size:11px;
 }
 
+.streetChip{
+position:absolute;z-index:24;
+top:calc(env(safe-area-inset-top) + 172px);
+left:72px;right:118px;
+border-radius:999px;padding:7px 10px;
+font-size:10px;font-weight:950;text-align:center;
+white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
 .turnBanner{
 position:absolute;z-index:26;
-top:calc(env(safe-area-inset-top) + 214px);
+top:calc(env(safe-area-inset-top) + 218px);
 left:8px;right:8px;
-border-radius:18px;padding:9px 12px;
-display:none;
+border-radius:18px;padding:10px 12px;display:none;
 }
 .turnMain{
 display:flex;align-items:center;justify-content:space-between;gap:8px;
 font-size:13px;font-weight:950;
 }
-.turnLeft{
-display:flex;align-items:center;gap:9px;min-width:0;
-}
+.turnLeft{display:flex;align-items:center;gap:9px;min-width:0}
 .turnArrow{
 width:34px;height:34px;border-radius:50%;
 display:flex;align-items:center;justify-content:center;
 background:linear-gradient(135deg,#00eaff,#125cff);
 font-size:19px;font-weight:950;flex-shrink:0;
 }
-.turnText{
-white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
+.turnText{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .turnSub{
 margin-top:5px;font-size:11px;color:#dce8ff;
-display:flex;justify-content:space-between;gap:8px;
+display:flex;justify-content:space-between;
 }
 
 .compass{
@@ -180,17 +154,27 @@ font-size:21px;font-weight:950;
 .compass:before{content:"▲";font-size:9px;color:#00eaff;margin-bottom:-2px}
 
 .carCenter{
-width:42px;height:42px;border-radius:50%;
-background:linear-gradient(135deg,#00eaff,#126bff);
+width:50px;height:50px;border-radius:50%;
+background:
+radial-gradient(circle,#ffffff 0%,#8ff7ff 18%,#00c8ff 45%,#126bff 100%);
 border:3px solid #fff;
 display:flex;align-items:center;justify-content:center;
-font-size:18px;
-box-shadow:0 0 0 10px rgba(0,234,255,.10),0 0 26px rgba(0,234,255,.55);
+font-size:20px;font-weight:950;
+box-shadow:
+0 0 0 10px rgba(0,234,255,.12),
+0 0 0 18px rgba(0,234,255,.06),
+0 0 28px rgba(0,234,255,.65);
+animation:breath 2s infinite ease-in-out;
+}
+@keyframes breath{
+0%{box-shadow:0 0 0 10px rgba(0,234,255,.12),0 0 0 18px rgba(0,234,255,.06),0 0 28px rgba(0,234,255,.55)}
+50%{box-shadow:0 0 0 14px rgba(0,234,255,.16),0 0 0 24px rgba(0,234,255,.08),0 0 34px rgba(0,234,255,.75)}
+100%{box-shadow:0 0 0 10px rgba(0,234,255,.12),0 0 0 18px rgba(0,234,255,.06),0 0 28px rgba(0,234,255,.55)}
 }
 
 .speedHud{
 position:absolute;z-index:22;
-left:16px;bottom:calc(env(safe-area-inset-bottom) + 118px);
+left:16px;bottom:calc(env(safe-area-inset-bottom) + 108px);
 width:82px;height:82px;border-radius:50%;
 background:
 radial-gradient(circle,rgba(255,255,255,.95) 0%,rgba(0,234,255,.20) 27%,rgba(2,8,21,.96) 62%),
@@ -208,7 +192,7 @@ right:8px;top:9px;background:#00ff9d;box-shadow:0 0 10px #00ff9d;
 .infoCard{
 position:absolute;z-index:22;
 left:112px;right:16px;
-bottom:calc(env(safe-area-inset-bottom) + 128px);
+bottom:calc(env(safe-area-inset-bottom) + 122px);
 border-radius:16px;padding:9px 10px;min-height:56px;
 }
 .infoTitle{font-size:13px;color:#00eaff;font-weight:950;margin-bottom:3px}
@@ -219,30 +203,19 @@ width:32px;height:32px;border-radius:50%;border:2px solid #ff7845;
 display:flex;align-items:center;justify-content:center;font-size:14px;color:#ffb184;
 }
 
-.smartFooter{
+.liveFooter{
 position:absolute;z-index:24;
-left:16px;right:16px;
-bottom:calc(env(safe-area-inset-bottom) + 18px);
-border-radius:18px;padding:10px;
+left:12px;right:12px;
+bottom:calc(env(safe-area-inset-bottom) + 14px);
+border-radius:20px;padding:10px;
 }
-.footerTop{
-display:flex;align-items:center;justify-content:space-between;gap:8px;
+.footerHead{
+display:flex;justify-content:space-between;align-items:center;
 font-size:11px;font-weight:950;
 }
-.footerMid{
-margin-top:7px;
-display:grid;grid-template-columns:1fr 1fr 1fr;
-gap:6px;
-font-size:10px;color:#dce8ff;
-}
-.footerItem{
-background:rgba(255,255,255,.05);
-border:1px solid rgba(255,255,255,.08);
-border-radius:12px;padding:7px 5px;text-align:center;
-}
-.trafficDot{
-width:12px;height:12px;border-radius:50%;
-background:#00c853;box-shadow:0 0 12px #00c853;
+.footerSub{
+margin-top:6px;font-size:10px;color:#dce8ff;
+display:flex;justify-content:space-between;
 }
 .progressWrap{
 margin-top:8px;height:5px;border-radius:999px;
@@ -252,19 +225,21 @@ background:rgba(255,255,255,.10);overflow:hidden;
 height:100%;width:0%;
 background:linear-gradient(90deg,#00eaff,#5f5cff,#ff8a00);
 }
+.trafficDot{
+width:12px;height:12px;border-radius:50%;
+background:#00c853;box-shadow:0 0 12px #00c853;
+}
 
 .alert{
 position:absolute;z-index:40;display:none;
 left:12px;right:12px;
-bottom:calc(env(safe-area-inset-bottom) + 198px);
+bottom:calc(env(safe-area-inset-bottom) + 188px);
 border-radius:16px;padding:12px;
 background:linear-gradient(135deg,#ff1744,#ff8a00);
 }
 .alert h2{font-size:15px}
 .alert p{font-size:11px}
 
-.radarPulse{animation:pulse 1.8s infinite}
-@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
 .leaflet-control-attribution{opacity:.12!important;transform:scale(.5)}
 </style>
 </head>
@@ -275,101 +250,88 @@ background:linear-gradient(135deg,#ff1744,#ff8a00);
 <div class="satDim" id="satDim"></div>
 
 <div class="topPanel glass">
-  <div class="brandRow">
-    <div class="brand">DriveGuard AI</div>
-    <div class="pill">V20 ULTRA</div>
-  </div>
-  <div class="metrics">
-    <div class="metric"><b id="speed">0</b><span>HIZ</span></div>
-    <div class="metric"><b id="limit">--</b><span>LİMİT</span></div>
-    <div class="metric"><b id="distance">--</b><span>MESAFE</span></div>
-    <div class="metric"><b id="risk">0</b><span>RİSK</span></div>
-  </div>
-  <div class="gpsLine" id="gpsState">GPS OFFLINE</div>
-  <div class="aiRow">
-    <div class="aiIcon">AI</div>
-    <div id="aiText">Ultra navigasyon sistemi hazır.</div>
-  </div>
+<div class="brandRow">
+<div class="brand">DriveGuard AI</div>
+<div class="pill">V21 CINEMA</div>
+</div>
+<div class="metrics">
+<div class="metric"><b id="speed">0</b><span>HIZ</span></div>
+<div class="metric"><b id="limit">--</b><span>LİMİT</span></div>
+<div class="metric"><b id="distance">--</b><span>MESAFE</span></div>
+<div class="metric"><b id="risk">0</b><span>RİSK</span></div>
+</div>
+<div class="gpsLine" id="gpsState">GPS OFFLINE</div>
+<div class="aiRow"><div class="aiIcon">AI</div><div id="aiText">Cinematic navigation hazır.</div></div>
 </div>
 
 <div class="controls">
-  <button class="ctrl primary" onclick="startDrive()">▶ BAŞLAT</button>
-  <button class="ctrl" onclick="toggleRouteBox()">🧭 ROTA</button>
-  <button class="ctrl" onclick="toggleLayers()">🗺️ HARİTA</button>
-  <button class="ctrl" onclick="toggleVoice()">🔊 SES <span id="voiceState">AÇIK</span></button>
-  <button class="ctrl on" id="trafficBtn" onclick="toggleTraffic()">🚦 TRAFİK</button>
-  <button class="ctrl" onclick="centerCar()">⌖ KONUM</button>
-</div>
-
-<div class="layerBar glass" id="layerBar">
-  <button onclick="setBaseLayer('classic')">Klasik</button>
-  <button onclick="setBaseLayer('terrain')">Arazi</button>
-  <button onclick="setBaseLayer('satellite')">Uydu</button>
-  <button onclick="setBaseLayer('dark')">Gece</button>
+<button class="ctrl primary" onclick="startDrive()">▶ BAŞLAT</button>
+<button class="ctrl" onclick="toggleRouteBox()">🧭 ROTA</button>
+<button class="ctrl" onclick="toggleLayers()">🗺️ HARİTA</button>
+<button class="ctrl" onclick="toggleVoice()">🔊 SES <span id="voiceState">AÇIK</span></button>
+<button class="ctrl on" id="trafficBtn" onclick="toggleTraffic()">🚦 TRAFİK</button>
+<button class="ctrl" onclick="centerCar()">⌖ KONUM</button>
 </div>
 
 <div class="streetChip glass" id="streetChip">Yol adı bekleniyor</div>
 
-<div class="routeBox glass" id="routeBox">
-  <div class="routeInputs">
-    <input id="fromInput" placeholder="Nereden?">
-    <input id="toInput" placeholder="Nereye? şehir, adres, mekan">
-    <button onclick="searchAndRoute()">GİT</button>
-  </div>
-  <div class="routeSummary">
-    <div id="routeInfo">Rota bekleniyor</div>
-    <div id="poiInfo">Önemli noktalar: --</div>
-  </div>
-  <div class="suggestions" id="suggestions"></div>
+<div class="searchBar glass" id="routeBox">
+<div class="searchRow">
+<input id="fromInput" placeholder="Nereden?">
+<input id="toInput" placeholder="Nereye? mekan / adres / şehir">
+<button onclick="searchAndRoute()">GİT</button>
+</div>
+<div class="searchMeta">
+<div id="routeInfo">Rota bekleniyor</div>
+<div id="poiInfo">Nokta: --</div>
+</div>
+<div class="suggestions" id="suggestions"></div>
 </div>
 
 <div class="turnBanner glass" id="turnBanner">
-  <div class="turnMain">
-    <div class="turnLeft">
-      <div class="turnArrow" id="navArrow">➜</div>
-      <div class="turnText" id="navInstruction">Rota bekleniyor</div>
-    </div>
-    <div id="navDistance">--</div>
-  </div>
-  <div class="turnSub">
-    <div id="navEta">ETA --</div>
-    <div id="navTraffic">Trafik --</div>
-  </div>
+<div class="turnMain">
+<div class="turnLeft">
+<div class="turnArrow" id="navArrow">➜</div>
+<div class="turnText" id="navInstruction">Rota bekleniyor</div>
+</div>
+<div id="navDistance">--</div>
+</div>
+<div class="turnSub">
+<div id="navEta">ETA --</div>
+<div id="navTraffic">Trafik --</div>
+</div>
 </div>
 
 <div class="compass glass" id="compass">N</div>
 
 <div class="speedHud">
-  <div class="speedLock" id="speedLock"></div>
-  <b id="orbSpeed">0</b>
-  <span>KM/S</span>
+<div class="speedLock" id="speedLock"></div>
+<b id="orbSpeed">0</b>
+<span>KM/S</span>
 </div>
 
 <div class="infoCard glass">
-  <div class="infoTitle" id="infoTitle">Hazır</div>
-  <div class="infoText" id="infoText">Canlı trafik, rota ve güvenli sürüş analizi beklemede.</div>
-  <div class="infoBadge" id="infoBadge">AI</div>
+<div class="infoTitle" id="infoTitle">Hazır</div>
+<div class="infoText" id="infoText">Canlı rota ve güvenli sürüş sistemi beklemede.</div>
+<div class="infoBadge" id="infoBadge">AI</div>
 </div>
 
-<div class="smartFooter glass">
-  <div class="footerTop">
-    <div style="display:flex;align-items:center;gap:7px">
-      <div class="trafficDot" id="trafficDot"></div>
-      <div id="trafficText">Trafik katmanı hazır</div>
-    </div>
-    <div id="trafficLevel">LIVE</div>
-  </div>
-  <div class="footerMid">
-    <div class="footerItem" id="laneText">Şerit hazır</div>
-    <div class="footerItem" id="nextPoint">Nokta: --</div>
-    <div class="footerItem" id="nextMeter">-- m</div>
-  </div>
-  <div class="progressWrap"><div class="progress" id="progress"></div></div>
+<div class="liveFooter glass">
+<div class="footerHead">
+<div style="display:flex;align-items:center;gap:7px"><div class="trafficDot" id="trafficDot"></div><div id="trafficText">Canlı veri hazır</div></div>
+<div id="trafficLevel">LIVE</div>
+</div>
+<div class="footerSub">
+<div id="laneText">Şerit hazır</div>
+<div id="nextPoint">Nokta: --</div>
+<div id="nextMeter">-- m</div>
+</div>
+<div class="progressWrap"><div class="progress" id="progress"></div></div>
 </div>
 
 <div class="alert" id="alertBox">
-  <h2 id="alertTitle">Uyarı</h2>
-  <p id="alertText"></p>
+<h2 id="alertTitle">Uyarı</h2>
+<p id="alertText"></p>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -377,7 +339,7 @@ background:linear-gradient(135deg,#ff1744,#ff8a00);
 const TOMTOM_KEY="EBqQEtO3y8XtbjCXFuxwqBOLocMz0xrW";
 
 let map,baseLayer,trafficLayer,markerLayer,carMarker,accuracyCircle;
-let traveledGlow,traveledLine,guideLine,navRouteGlow,navRouteLine,navRouteCore;
+let navRouteGlow,navRouteLine,navRouteCore,traveledLine,guideLine;
 let currentLat=null,currentLng=null,currentHeading=0,lastLat=null,lastLng=null,watchId=null;
 let voiceEnabled=true,trafficEnabled=true,mapMode="classic";
 let traveled=[],safetyPoints=[],currentDestination=null,currentRouteCoords=[];
@@ -406,19 +368,19 @@ setBaseLayer("classic");
 
 trafficLayer=L.tileLayer(
 "https://api.tomtom.com/traffic/map/4/tile/flow/relative0/{z}/{x}/{y}.png?key="+TOMTOM_KEY,
-{maxZoom:20,opacity:.64}
+{maxZoom:20,opacity:.66}
 ).addTo(map);
 
-navRouteGlow=L.polyline([],{color:"#ffffff",weight:13,opacity:.35}).addTo(map);
+navRouteGlow=L.polyline([],{color:"#ffffff",weight:13,opacity:.34}).addTo(map);
 navRouteLine=L.polyline([],{color:"#126bff",weight:9,opacity:.88}).addTo(map);
 navRouteCore=L.polyline([],{color:"#63d9ff",weight:3,opacity:.95}).addTo(map);
 
-traveledGlow=L.polyline([],{color:"#ffffff",weight:8,opacity:.22}).addTo(map);
 traveledLine=L.polyline([],{color:"#00eaff",weight:5,opacity:.9}).addTo(map);
 guideLine=L.polyline([],{color:"#00eaff",weight:8,opacity:.16}).addTo(map);
 
 markerLayer=L.layerGroup().addTo(map);
 
+createLayerSheet();
 loadRadarNetwork();
 bindSearchSuggest();
 registerOfflineMode();
@@ -426,26 +388,58 @@ registerOfflineMode();
 
 function setBaseLayer(type){
 mapMode=type;
+
 if(baseLayer)map.removeLayer(baseLayer);
-baseLayer=L.tileLayer(tileLayers[type],{maxZoom:20,attribution:""}).addTo(map);
+
+baseLayer=L.tileLayer(tileLayers[type],{
+maxZoom:20,
+attribution:""
+}).addTo(map);
 
 document.getElementById("satDim").style.display=type==="satellite"?"block":"none";
 
 if(trafficLayer&&trafficEnabled)trafficLayer.addTo(map);
 
 setText("infoTitle","Harita Modu");
-setText("infoText",type==="classic"?"Klasik harita aktif.":type==="terrain"?"Arazi görünümü aktif.":type==="satellite"?"Uydu görünümü aktif.":"Gece haritası aktif.");
+setText("infoText",
+type==="classic"?"Klasik harita aktif.":
+type==="terrain"?"Arazi görünümü aktif.":
+type==="satellite"?"Uydu görünümü aktif.":
+"Gece haritası aktif."
+);
 }
 
-function toggleLayers(){
-const el=document.getElementById("layerBar");
-el.style.display=el.style.display==="grid"?"none":"grid";
+function createLayerSheet(){
+if(document.getElementById("layerSheet"))return;
+
+const sheet=document.createElement("div");
+sheet.id="layerSheet";
+sheet.className="glass";
+sheet.style.cssText="position:absolute;z-index:35;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom) + 18px);border-radius:22px;padding:12px;display:none";
+sheet.innerHTML=`
+<div style="font-size:13px;font-weight:950;margin-bottom:10px">Harita görünümü</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+<button onclick="setBaseLayer('classic');toggleLayers(false)" style="border:0;border-radius:15px;padding:12px 4px;color:#fff;font-size:10px;font-weight:950;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12)">Klasik</button>
+<button onclick="setBaseLayer('terrain');toggleLayers(false)" style="border:0;border-radius:15px;padding:12px 4px;color:#fff;font-size:10px;font-weight:950;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12)">Arazi</button>
+<button onclick="setBaseLayer('satellite');toggleLayers(false)" style="border:0;border-radius:15px;padding:12px 4px;color:#fff;font-size:10px;font-weight:950;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12)">Uydu</button>
+<button onclick="setBaseLayer('dark');toggleLayers(false)" style="border:0;border-radius:15px;padding:12px 4px;color:#fff;font-size:10px;font-weight:950;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12)">Gece</button>
+</div>`;
+document.body.appendChild(sheet);
+}
+
+function toggleLayers(force){
+const el=document.getElementById("layerSheet");
+if(!el)return;
+if(force===false){el.style.display="none";return;}
+el.style.display=el.style.display==="block"?"none":"block";
 }
 
 async function loadRadarNetwork(){
 const offlineData=await loadOfflineRadars();
+
 safetyPoints=(offlineData&&Array.isArray(offlineData.points))?normalizePoints(offlineData.points):[...demoPoints];
 safetyPoints=[...safetyPoints,...saved];
+
 drawSafetyPoints();
 setInitialInfo();
 }
@@ -481,8 +475,16 @@ markerLayer.clearLayers();
 
 safetyPoints.forEach(p=>{
 const s=styleFor(p.type);
+
 const icon=L.divIcon({
-html:`<div class="radarPulse" style="width:31px;height:31px;border-radius:50%;background:${s.color};border:3px solid white;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 0 15px ${s.color};">${s.icon}</div>`,
+html:`<div style="
+width:31px;height:31px;border-radius:50%;
+background:${s.color};
+border:3px solid white;
+display:flex;align-items:center;justify-content:center;
+font-size:13px;
+box-shadow:0 0 15px ${s.color};
+">${s.icon}</div>`,
 className:"",
 iconSize:[31,31],
 iconAnchor:[15,15]
@@ -507,7 +509,9 @@ return{color:"#00d97e",icon:"📍"};
 
 function setInitialInfo(){
 if(!safetyPoints.length)return;
+
 const p=safetyPoints[0];
+
 setText("limit",p.limit);
 setText("infoTitle",p.name);
 setText("infoText",`${p.note} • Limit ${p.limit} km/s`);
@@ -535,10 +539,12 @@ if(currentLat&&currentLng&&!from.value)reverseCurrentLocation();
 
 to.addEventListener("input",debounce(async function(){
 const q=this.value.trim();
+
 if(q.length<3){
 document.getElementById("suggestions").style.display="none";
 return;
 }
+
 const results=await tomtomSearch(q);
 showSuggestions(results);
 },350));
@@ -552,6 +558,7 @@ const url=`https://api.tomtom.com/search/2/reverseGeocode/${currentLat},${curren
 const r=await fetch(url);
 const d=await r.json();
 const address=d.addresses?.[0]?.address?.freeformAddress;
+
 if(address){
 document.getElementById("fromInput").value=address;
 setText("streetChip",address);
@@ -561,7 +568,9 @@ setText("streetChip",address);
 
 async function updateStreetName(){
 const now=Date.now();
+
 if(now-lastStreetLookup<12000||!currentLat||!currentLng)return;
+
 lastStreetLookup=now;
 
 try{
@@ -570,6 +579,7 @@ const r=await fetch(url);
 const d=await r.json();
 const a=d.addresses?.[0]?.address;
 const street=a?.streetName||a?.freeformAddress||"Yol bilgisi alınıyor";
+
 setText("streetChip",street);
 }catch(e){}
 }
@@ -607,6 +617,7 @@ box.innerHTML="";
 results.forEach(r=>{
 const label=r.poi?.name||r.address?.freeformAddress||r.address?.municipality||"Konum";
 const sub=r.address?.freeformAddress||r.address?.municipality||"";
+
 const div=document.createElement("div");
 div.className="suggestion";
 div.innerHTML=`<b>${label}</b><br><span style="color:#9fb0d0">${sub}</span>`;
@@ -631,15 +642,19 @@ let dest=currentDestination;
 
 if(!dest){
 const q=document.getElementById("toInput").value.trim();
+
 if(!q){
 alert("Hedef gir.");
 return;
 }
+
 const results=await tomtomSearch(q);
+
 if(!results.length){
 alert("Hedef bulunamadı.");
 return;
 }
+
 dest={
 lat:results[0].position.lat,
 lng:results[0].position.lon,
@@ -649,7 +664,6 @@ name:results[0].poi?.name||results[0].address?.freeformAddress||q
 
 await calculateRoute(dest);
 }
-
 async function calculateRoute(dest){
 const url=
 `https://api.tomtom.com/routing/1/calculateRoute/${currentLat},${currentLng}:${dest.lat},${dest.lng}/json`+
@@ -688,7 +702,7 @@ const poiCount=countPointsOnRoute(pts);
 const restCount=await loadRoutePOI(pts);
 
 setText("routeInfo",`${dest.name} • ${km} km • ${min} dk`);
-setText("poiInfo",`Radar/önemli: ${poiCount} • Mola: ${restCount}`);
+setText("poiInfo",`Radar: ${poiCount} • Mola: ${restCount}`);
 setText("navEta",`ETA ${eta} • ${km} km • ${min} dk`);
 setText("navTraffic",trafficLabel(delay));
 setText("aiText",`${dest.name} rotası hazır. ${km} km, yaklaşık ${min} dakika.`);
@@ -724,11 +738,19 @@ maneuver:ins.maneuver||""
 
 return instructions;
 }
-function startDrive(){
-if(!navigator.geolocation){alert("Konum desteği yok.");return;}
-if(watchId!==null){centerCar();return;}
 
-if(voiceEnabled)speak("DriveGuard AI ultra navigasyon aktif.");
+function startDrive(){
+if(!navigator.geolocation){
+alert("Konum desteği yok.");
+return;
+}
+
+if(watchId!==null){
+centerCar();
+return;
+}
+
+if(voiceEnabled)speak("DriveGuard AI cinematic navigasyon aktif.");
 
 watchId=navigator.geolocation.watchPosition(pos=>{
 const lat=pos.coords.latitude;
@@ -755,6 +777,8 @@ lastLat=lat;
 lastLng=lng;
 
 updateGPSState(acc);
+updateCameraRotation(currentHeading);
+
 if(!document.getElementById("fromInput").value)reverseCurrentLocation();
 
 drawCar(lat,lng,acc,currentHeading);
@@ -766,6 +790,17 @@ updateStreetName();
 alert("Konum izni gerekli.");
 setText("gpsState","GPS OFFLINE");
 },{enableHighAccuracy:true,maximumAge:1000,timeout:10000});
+}
+
+function updateCameraRotation(heading){
+const mapEl=document.getElementById("map");
+if(!mapEl)return;
+
+if(currentRouteCoords.length>0){
+mapEl.style.transform=`rotate(${-heading}deg) scale(1.12)`;
+}else{
+mapEl.style.transform="rotate(0deg) scale(1)";
+}
 }
 
 function updateGPSState(acc){
@@ -784,18 +819,14 @@ color="#ff1744";
 const el=document.getElementById("gpsState");
 el.innerText=txt+" • ±"+Math.round(acc)+"m";
 el.style.color=color;
-
-const lock=document.getElementById("speedLock");
-lock.style.background=color;
-lock.style.boxShadow="0 0 10px "+color;
 }
 
 function drawCar(lat,lng,acc,heading){
 const icon=L.divIcon({
 html:`<div class="carCenter" style="transform:rotate(${heading}deg)">➤</div>`,
 className:"",
-iconSize:[42,42],
-iconAnchor:[21,21]
+iconSize:[50,50],
+iconAnchor:[25,25]
 });
 
 if(!carMarker){
@@ -820,7 +851,6 @@ function updateTraveledRoute(lat,lng){
 traveled.push([lat,lng]);
 if(traveled.length>250)traveled.shift();
 
-traveledGlow.setLatLngs(traveled);
 traveledLine.setLatLngs(traveled);
 
 const projected=projectPoint(lat,lng,currentHeading,260);
