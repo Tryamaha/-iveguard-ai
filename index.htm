@@ -5,369 +5,214 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="DriveGuard">
-<meta name="theme-color" content="#050814">
-
-<title>DriveGuard AI Ultimate V6</title>
+<title>DriveGuard AI V7</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent;
-}
-
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  background:#050814;
-  color:#fff;
+  width:100%;height:100%;overflow:hidden;
+  background:#020713;color:white;
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Arial,sans-serif;
 }
-
-#map{
-  position:fixed;
-  inset:0;
-  z-index:1;
-  background:#050814;
-}
-
-#map.night{
-  filter:brightness(.38) contrast(1.45) saturate(.55)!important;
-}
-
-.glass{
-  background:linear-gradient(145deg,rgba(14,20,38,.88),rgba(6,9,22,.78));
-  backdrop-filter:blur(26px);
-  -webkit-backdrop-filter:blur(26px);
-  border:1px solid rgba(255,255,255,.10);
-  box-shadow:0 22px 80px rgba(0,0,0,.55);
-}
-
-.topDock{
-  position:absolute;
-  top:calc(env(safe-area-inset-top) + 10px);
-  left:12px;
-  right:12px;
-  z-index:900;
-  border-radius:28px;
-  padding:14px;
-  box-shadow:0 25px 90px rgba(0,0,0,.62), inset 0 1px 0 rgba(255,255,255,.08);
-}
-
-.brandRow{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-
-.brand{
-  font-size:23px;
-  font-weight:950;
-  letter-spacing:-.5px;
-}
-
-.modePill{
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:.5px;
-  padding:7px 12px;
-  border-radius:999px;
-  background:linear-gradient(135deg,#00e5ff,#7c4dff);
-  box-shadow:0 0 24px rgba(0,229,255,.35);
-}
-
-.metrics{
-  margin-top:13px;
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:8px;
-}
-
-.metric{
-  border-radius:18px;
-  padding:10px 6px;
-  text-align:center;
-  background:rgba(255,255,255,.065);
-  border:1px solid rgba(255,255,255,.06);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
-}
-
-.metricValue{
-  font-size:24px;
-  font-weight:950;
-  letter-spacing:-.7px;
-}
-
-.metricLabel{
-  margin-top:2px;
-  font-size:10px;
-  color:#aeb9d7;
-  font-weight:700;
-}
-
-.aiText{
-  margin-top:11px;
-  color:#dfe7ff;
-  font-size:13px;
-  line-height:1.38;
-}
-
-.controlRail{
-  position:absolute;
-  right:12px;
-  top:calc(env(safe-area-inset-top) + 198px);
-  z-index:920;
-  display:flex;
-  flex-direction:column;
-  gap:9px;
-}
-
-.ctrl{
-  min-width:118px;
-  border:0;
-  color:#fff;
-  font-weight:950;
-  font-size:12px;
-  padding:13px 12px;
-  border-radius:18px;
-  background:linear-gradient(145deg,rgba(12,17,34,.92),rgba(4,7,18,.86));
-  border:1px solid rgba(255,255,255,.10);
-  box-shadow:0 14px 35px rgba(0,0,0,.35);
-}
-
-.ctrl.primary{
-  background:linear-gradient(135deg,#00e5ff,#0077ff)!important;
-  box-shadow:0 0 28px rgba(0,229,255,.38);
-}
-
-.compass{
-  position:absolute;
-  left:14px;
-  top:calc(env(safe-area-inset-top) + 198px);
-  z-index:920;
-  width:66px;
-  height:66px;
-  border-radius:24px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:25px;
-  font-weight:950;
-}
-
-.speedOrb{
-  position:absolute;
-  left:24px;
-  bottom:calc(env(safe-area-inset-bottom) + 150px);
-  z-index:910;
-  width:116px;
-  height:116px;
-  border-radius:50%;
+#map{position:fixed;inset:0;z-index:1;background:#020713;filter:brightness(.55) contrast(1.35) saturate(.7)}
+#map::after{
+  content:"";position:fixed;inset:0;z-index:2;pointer-events:none;
   background:
-    radial-gradient(circle at 40% 35%,rgba(255,255,255,.92),rgba(0,229,255,.35) 28%,rgba(3,9,22,.95) 70%);
-  border:2px solid rgba(0,229,255,.55);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  box-shadow:0 0 42px rgba(0,229,255,.35);
+    radial-gradient(circle at 50% 52%,rgba(0,229,255,.12),transparent 20%),
+    linear-gradient(to bottom,rgba(2,7,19,.25),rgba(2,7,19,.05),rgba(2,7,19,.85));
 }
-
-.orbSpeed{
-  font-size:43px;
-  font-weight:1000;
+.glass{
+  background:linear-gradient(145deg,rgba(9,16,33,.9),rgba(3,7,18,.82));
+  backdrop-filter:blur(25px);-webkit-backdrop-filter:blur(25px);
+  border:1px solid rgba(155,190,255,.24);
+  box-shadow:0 22px 70px rgba(0,0,0,.58),inset 0 1px 0 rgba(255,255,255,.08);
 }
-
-.orbLabel{
-  font-size:11px;
-  color:#c7f5ff;
-  font-weight:800;
+.topPanel{
+  position:absolute;z-index:20;
+  top:calc(env(safe-area-inset-top) + 12px);
+  left:12px;width:64%;
+  border-radius:25px;padding:14px;
 }
-
+.brandRow{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.brand{font-weight:950;font-size:20px;letter-spacing:-.4px;white-space:nowrap}
+.pill{
+  font-size:11px;font-weight:950;padding:7px 11px;border-radius:999px;
+  background:linear-gradient(135deg,#00eaff,#245bff);
+  box-shadow:0 0 25px rgba(0,234,255,.35);
+}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+.metric{
+  border-radius:16px;text-align:center;padding:9px 5px;
+  background:rgba(255,255,255,.045);
+  border:1px solid rgba(255,255,255,.12);
+}
+.metric b{font-size:23px;font-weight:950;display:block}
+.metric span{font-size:10px;color:#c7d4ee;font-weight:800}
+.aiRow{margin-top:14px;display:flex;align-items:flex-start;gap:10px;color:#e7ecff;font-size:13px;line-height:1.35}
+.aiIcon{
+  min-width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid #00eaff;color:#00eaff;font-weight:950;
+  box-shadow:0 0 22px rgba(0,234,255,.25);
+}
+.controls{
+  position:absolute;z-index:21;
+  top:calc(env(safe-area-inset-top) + 18px);
+  right:12px;width:28%;
+  display:flex;flex-direction:column;gap:10px;
+}
+.ctrl{
+  border:0;color:white;border-radius:20px;
+  padding:14px 8px;font-weight:950;font-size:13px;
+  background:linear-gradient(145deg,rgba(5,12,26,.92),rgba(2,6,16,.86));
+  border:1px solid rgba(155,190,255,.26);
+  box-shadow:0 14px 34px rgba(0,0,0,.42);
+}
+.ctrl.primary{
+  background:linear-gradient(135deg,#00eaff,#125cff);
+  box-shadow:0 0 35px rgba(0,234,255,.35);
+}
+.ctrlIcon{font-size:17px;margin-right:5px}
+.compass{
+  position:absolute;z-index:22;left:18px;top:calc(env(safe-area-inset-top) + 205px);
+  width:74px;height:74px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;
+  font-size:31px;font-weight:950;
+}
+.compass:before{
+  content:"▲";font-size:15px;color:#00eaff;margin-bottom:-2px;
+}
+.carCenter{
+  width:54px;height:54px;border-radius:50%;
+  background:linear-gradient(135deg,#00eaff,#126bff);
+  border:4px solid white;
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;color:white;
+  box-shadow:0 0 0 14px rgba(0,234,255,.14),0 0 38px rgba(0,234,255,.8);
+}
+.routeArrow{
+  width:22px;height:22px;color:#00eaff;font-size:22px;
+  text-shadow:0 0 14px #00eaff;
+}
+.speedDial{
+  position:absolute;z-index:22;
+  left:18px;bottom:calc(env(safe-area-inset-bottom) + 128px);
+  width:135px;height:135px;border-radius:50%;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(255,255,255,.92) 0%,rgba(0,234,255,.22) 30%,rgba(2,8,21,.96) 65%),
+    conic-gradient(from 0deg,#00eaff 0 75deg,transparent 75deg 360deg);
+  border:2px solid rgba(0,234,255,.75);
+  box-shadow:0 0 45px rgba(0,234,255,.35);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;
+}
+.speedDial:before{
+  content:"";position:absolute;inset:10px;border-radius:50%;
+  border:1px dashed rgba(255,255,255,.2);
+}
+.speedDial b{font-size:45px;font-weight:1000;z-index:1}
+.speedDial span{font-size:13px;color:#8ff7ff;font-weight:900;z-index:1}
 .infoCard{
-  position:absolute;
-  left:168px;
-  right:12px;
-  bottom:calc(env(safe-area-inset-bottom) + 154px);
-  z-index:910;
-  border-radius:24px;
-  padding:14px;
-  font-size:13px;
-  line-height:1.35;
-  color:#e4ebff;
+  position:absolute;z-index:22;
+  left:178px;right:18px;
+  bottom:calc(env(safe-area-inset-bottom) + 145px);
+  border-radius:23px;padding:15px 18px;
+  min-height:88px;
 }
-
+.infoTitle{font-size:18px;color:#00eaff;font-weight:950;margin-bottom:7px}
+.infoText{font-size:14px;line-height:1.45;color:#e7ecff}
+.infoBadge{
+  position:absolute;right:16px;top:50%;transform:translateY(-50%);
+  width:58px;height:58px;border-radius:50%;
+  border:2px solid #ff7845;color:#ffb184;
+  display:flex;align-items:center;justify-content:center;font-size:26px;
+  box-shadow:0 0 24px rgba(255,120,69,.35);
+}
 .nextBar{
-  position:absolute;
-  left:12px;
-  right:12px;
-  bottom:calc(env(safe-area-inset-bottom) + 58px);
-  z-index:910;
-  border-radius:24px;
-  padding:14px 16px;
+  position:absolute;z-index:22;
+  left:18px;right:18px;
+  bottom:calc(env(safe-area-inset-bottom) + 36px);
+  border-radius:25px;padding:18px;
 }
-
-.nextTop{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  font-size:13px;
-  font-weight:850;
-}
-
-.progressWrap{
-  margin-top:10px;
-  height:7px;
-  border-radius:999px;
-  background:rgba(255,255,255,.12);
-  overflow:hidden;
-}
-
-.progress{
-  height:100%;
-  width:0%;
-  border-radius:999px;
-  background:linear-gradient(90deg,#00e5ff,#7c4dff,#ff9800);
-  transition:width .35s ease;
-}
-
+.nextTop{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:16px;font-weight:950}
+.nextTop small{font-size:16px;color:white}
+.progressWrap{margin-top:15px;height:9px;border-radius:999px;background:rgba(255,255,255,.13);overflow:hidden}
+.progress{height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,#00eaff,#5f5cff,#ff8a00);transition:.35s}
 .alert{
-  position:absolute;
-  left:12px;
-  right:12px;
-  bottom:calc(env(safe-area-inset-bottom) + 214px);
-  z-index:1200;
-  display:none;
-  border-radius:28px;
-  padding:17px;
-  background:linear-gradient(135deg,#ff1744,#ff9800);
-  box-shadow:0 25px 90px rgba(255,23,68,.55);
+  position:absolute;z-index:40;display:none;
+  left:14px;right:14px;bottom:calc(env(safe-area-inset-bottom) + 258px);
+  border-radius:24px;padding:16px;
+  background:linear-gradient(135deg,#ff1744,#ff8a00);
+  box-shadow:0 22px 70px rgba(255,23,68,.5);
 }
-
-.alert h2{
-  font-size:21px;
-  margin-bottom:5px;
+.alert h2{font-size:20px;margin-bottom:4px}
+.alert p{font-size:14px}
+.poiLabel{
+  color:white;text-shadow:0 2px 6px black;font-size:13px;font-weight:700;
 }
-
-.alert p{
-  font-size:14px;
-  line-height:1.35;
-}
-
-.aiBubble{
-  position:absolute;
-  left:12px;
-  right:12px;
-  bottom:calc(env(safe-area-inset-bottom) + 285px);
-  z-index:1190;
-  display:none;
-  border-radius:28px;
-  padding:16px;
-  animation:aiSlide .35s ease;
-}
-
-@keyframes aiSlide{
-  from{opacity:0;transform:translateY(18px)}
-  to{opacity:1;transform:translateY(0)}
-}
-
-.aiBubbleTitle{
-  font-weight:950;
-  margin-bottom:5px;
-}
-
-.aiBubbleMsg{
-  color:#dfe7ff;
-  font-size:13px;
-  line-height:1.35;
-}
-
-.carPulse{
-  animation:carPulse 1.4s infinite;
-}
-
-@keyframes carPulse{
-  0%{box-shadow:0 0 0 0 rgba(0,229,255,.55)}
-  70%{box-shadow:0 0 0 18px rgba(0,229,255,0)}
-  100%{box-shadow:0 0 0 0 rgba(0,229,255,0)}
-}
-
-.leaflet-control-attribution{
-  transform:scale(.65);
-  transform-origin:bottom right;
-  opacity:.25!important;
-  font-size:10px!important;
+.leaflet-control-attribution{opacity:.15!important;transform:scale(.6);transform-origin:bottom right}
+@media(max-width:430px){
+  .topPanel{width:64%;padding:12px}
+  .brand{font-size:17px}
+  .metric b{font-size:20px}
+  .controls{width:29%}
+  .ctrl{font-size:12px;padding:13px 6px}
+  .infoCard{left:160px}
+  .speedDial{width:122px;height:122px}
 }
 </style>
 </head>
 
 <body>
-
 <div id="map"></div>
 
-<div class="topDock glass">
+<div class="topPanel glass">
   <div class="brandRow">
     <div class="brand">DriveGuard AI Ultimate</div>
-    <div class="modePill">SAFE AI</div>
+    <div class="pill">SAFE AI</div>
   </div>
 
   <div class="metrics">
-    <div class="metric">
-      <div class="metricValue" id="speed">0</div>
-      <div class="metricLabel">HIZ</div>
-    </div>
-    <div class="metric">
-      <div class="metricValue" id="limit">--</div>
-      <div class="metricLabel">LİMİT</div>
-    </div>
-    <div class="metric">
-      <div class="metricValue" id="distance">--</div>
-      <div class="metricLabel">MESAFE</div>
-    </div>
-    <div class="metric">
-      <div class="metricValue" id="risk">0</div>
-      <div class="metricLabel">RİSK</div>
-    </div>
+    <div class="metric"><b id="speed">0</b><span>HIZ<br>KM/S</span></div>
+    <div class="metric"><b id="limit">70</b><span>LİMİT<br>KM/S</span></div>
+    <div class="metric"><b id="distance">--</b><span>MESAFE</span></div>
+    <div class="metric"><b id="risk">0</b><span>RİSK<br>/100</span></div>
   </div>
 
-  <div class="aiText" id="aiText">
-    AI güvenli sürüş sistemi hazır. Başlat butonuna basınca canlı analiz başlayacak.
+  <div class="aiRow">
+    <div class="aiIcon">AI</div>
+    <div id="aiText">AI güvenli sürüş sistemi hazır. Başlat butonuna basınca canlı analiz başlayacak.</div>
   </div>
 </div>
 
-<div class="controlRail">
-  <button class="ctrl primary" onclick="startDrive()">BAŞLAT</button>
-  <button class="ctrl" onclick="toggleVoice()">SES <span id="voiceState">AÇIK</span></button>
-  <button class="ctrl" onclick="toggleNight()">GECE</button>
-  <button class="ctrl" onclick="centerCar()">KONUM</button>
-  <button class="ctrl" onclick="savePoint()">NOKTA EKLE</button>
+<div class="controls">
+  <button class="ctrl primary" onclick="startDrive()"><span class="ctrlIcon">▶</span>BAŞLAT</button>
+  <button class="ctrl" onclick="toggleVoice()"><span class="ctrlIcon">🔊</span>SES <span id="voiceState">AÇIK</span></button>
+  <button class="ctrl" onclick="toggleNight()"><span class="ctrlIcon">🌙</span>GECE</button>
+  <button class="ctrl" onclick="centerCar()"><span class="ctrlIcon">⌖</span>KONUM</button>
+  <button class="ctrl" onclick="savePoint()"><span class="ctrlIcon">✚</span>NOKTA EKLE</button>
 </div>
 
 <div class="compass glass" id="compass">N</div>
 
-<div class="speedOrb">
-  <div class="orbSpeed" id="orbSpeed">0</div>
-  <div class="orbLabel">KM/S</div>
+<div class="speedDial">
+  <b id="orbSpeed">0</b>
+  <span>KM/S</span>
 </div>
 
-<div class="infoCard glass" id="infoCard">
-  En yakın güvenlik noktası analiz ediliyor.
+<div class="infoCard glass">
+  <div class="infoTitle" id="infoTitle">Ortalama Hız Koridoru</div>
+  <div class="infoText" id="infoText">Ortalama hız ölçüm alanı • Limit 70 km/s • AI risk 0/100</div>
+  <div class="infoBadge">⏱</div>
 </div>
 
 <div class="nextBar glass">
   <div class="nextTop">
     <div id="nextPoint">Yaklaşan nokta: --</div>
-    <div id="nextMeter">-- m</div>
+    <small id="nextMeter">-- m</small>
   </div>
-  <div class="progressWrap">
-    <div class="progress" id="progress"></div>
-  </div>
+  <div class="progressWrap"><div class="progress" id="progress"></div></div>
 </div>
 
 <div class="alert" id="alertBox">
@@ -375,346 +220,289 @@ html,body{
   <p id="alertText">Yaklaşan güvenlik noktası.</p>
 </div>
 
-<div class="aiBubble glass" id="aiBubble">
-  <div class="aiBubbleTitle">DriveGuard AI</div>
-  <div class="aiBubbleMsg" id="aiBubbleMsg">Sürüş analizi hazırlanıyor.</div>
-</div>
-
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-let map;
-let carMarker;
-let accuracyCircle;
-let routeLine;
-let traveled = [];
-let currentLat = null;
-let currentLng = null;
-let currentHeading = 0;
-let voiceEnabled = true;
-let lastWarn = 0;
-let aiBubbleTimer = null;
+let map, carMarker, accuracyCircle, routeLine, guideLine;
+let currentLat=null,currentLng=null,currentHeading=0;
+let voiceEnabled=true,lastWarn=0;
+let routePoints=[];
 
-let userSavedPoints = JSON.parse(localStorage.getItem("driveguard_points") || "[]");
+const saved = JSON.parse(localStorage.getItem("driveguard_points") || "[]");
 
-const safetyPoints = [
-  {name:"EDS Hız Kamerası",lat:38.6191,lng:27.4289,limit:50,type:"camera",note:"Elektronik hız kontrol bölgesi"},
-  {name:"Okul Bölgesi",lat:38.6212,lng:27.4241,limit:30,type:"school",note:"Yaya ve öğrenci geçişi yoğun"},
-  {name:"Tehlikeli Kavşak",lat:38.6157,lng:27.4315,limit:50,type:"danger",note:"Kaza riski yüksek kavşak"},
+const safetyPoints=[
   {name:"Ortalama Hız Koridoru",lat:38.6260,lng:27.4352,limit:70,type:"average",note:"Ortalama hız ölçüm alanı"},
-  ...userSavedPoints
+  {name:"EDS Hız Kamerası",lat:38.6191,lng:27.4289,limit:50,type:"camera",note:"Elektronik hız kontrol bölgesi"},
+  {name:"Okul Bölgesi",lat:38.6212,lng:27.4241,limit:30,type:"school",note:"Yaya geçişi yoğun alan"},
+  {name:"Tehlikeli Kavşak",lat:38.6157,lng:27.4315,limit:50,type:"danger",note:"Kaza riski yüksek kavşak"},
+  ...saved
+];
+
+const poi=[
+  {name:"Shell",lat:38.6184,lng:27.4265,type:"fuel"},
+  {name:"Opet",lat:38.6201,lng:27.4315,type:"fuel"},
+  {name:"Kipa AVM",lat:38.6164,lng:27.4239,type:"shop"},
+  {name:"İzmir Otoyol Dinlenme Tesisi",lat:38.6176,lng:27.4326,type:"rest"},
+  {name:"5133. Sk.",lat:38.6224,lng:27.4342,type:"road"}
 ];
 
 function initMap(){
-  map = L.map("map",{
-    zoomControl:false,
-    attributionControl:true
-  }).setView([38.6191,27.4289],15);
+  map=L.map("map",{zoomControl:false,attributionControl:true})
+    .setView([38.6191,27.4289],17);
 
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
-    maxZoom:19
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{
+    maxZoom:20,
+    attribution:""
   }).addTo(map);
 
+  drawRoadGlow();
   drawSafetyPoints();
+  drawPOI();
 
-  routeLine = L.polyline([],{
-    color:"#00e5ff",
-    weight:6,
-    opacity:.8
+  routeLine=L.polyline([],{
+    color:"#00eaff",weight:6,opacity:.85
   }).addTo(map);
+
+  guideLine=L.polyline([
+    [38.6148,27.4265],
+    [38.6173,27.4284],
+    [38.6191,27.4289],
+    [38.6220,27.4312],
+    [38.6260,27.4352]
+  ],{
+    color:"#ff8a00",weight:12,opacity:.55
+  }).addTo(map);
+}
+
+function drawRoadGlow(){
+  const mainRoad=[
+    [38.6138,27.4256],
+    [38.6164,27.4276],
+    [38.6191,27.4289],
+    [38.6220,27.4312],
+    [38.6268,27.4356]
+  ];
+  L.polyline(mainRoad,{color:"#ff8a00",weight:18,opacity:.28}).addTo(map);
+  L.polyline(mainRoad,{color:"#ffb05a",weight:6,opacity:.55}).addTo(map);
+
+  for(let i=0;i<4;i++){
+    const a=mainRoad[i],b=mainRoad[i+1];
+    const lat=(a[0]+b[0])/2,lng=(a[1]+b[1])/2;
+    L.marker([lat,lng],{
+      icon:L.divIcon({
+        html:`<div class="routeArrow">⌃</div>`,
+        className:"",
+        iconSize:[22,22],
+        iconAnchor:[11,11]
+      })
+    }).addTo(map);
+  }
 }
 
 function drawSafetyPoints(){
   safetyPoints.forEach(p=>{
-    const color =
-      p.type==="school" ? "#00e5ff" :
-      p.type==="danger" ? "#ff1744" :
-      p.type==="average" ? "#ff9800" :
-      p.type==="user" ? "#00ff90" : "#7c4dff";
-
-    const emoji =
-      p.type==="school" ? "🏫" :
-      p.type==="danger" ? "⚠️" :
-      p.type==="average" ? "⏱️" :
-      p.type==="user" ? "📍" : "📷";
-
-    const icon = L.divIcon({
-      html:`
-      <div style="
-        width:34px;
-        height:34px;
-        border-radius:50%;
-        background:${color};
-        border:3px solid white;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        font-size:15px;
-        box-shadow:0 0 24px ${color};
-      ">${emoji}</div>`,
-      className:"",
-      iconSize:[34,34],
-      iconAnchor:[17,17]
+    const cfg=pointStyle(p.type);
+    const icon=L.divIcon({
+      html:`<div style="
+        width:44px;height:44px;border-radius:50%;
+        background:${cfg.bg};border:3px solid white;
+        display:flex;align-items:center;justify-content:center;
+        font-size:21px;box-shadow:0 0 25px ${cfg.shadow};
+      ">${cfg.emoji}</div>`,
+      className:"",iconSize:[44,44],iconAnchor:[22,22]
     });
-
-    L.marker([p.lat,p.lng],{icon}).addTo(map)
-      .bindPopup("<b>"+p.name+"</b><br>"+p.note+"<br>Limit: "+p.limit+" km/s");
+    L.marker([p.lat,p.lng],{icon}).addTo(map).bindPopup(`<b>${p.name}</b><br>${p.note}<br>Limit ${p.limit} km/s`);
   });
 }
 
-function startDrive(){
-  if(!navigator.geolocation){
-    alert("Konum desteği yok.");
-    return;
-  }
-
-  navigator.geolocation.watchPosition(pos=>{
-    const lat = pos.coords.latitude;
-    const lng = pos.coords.longitude;
-    const speed = Math.round((pos.coords.speed || 0) * 3.6);
-    const acc = pos.coords.accuracy;
-    const heading = pos.coords.heading;
-
-    currentLat = lat;
-    currentLng = lng;
-
-    if(heading !== null && !Number.isNaN(heading)){
-      currentHeading = heading;
+function drawPOI(){
+  poi.forEach(x=>{
+    const iconMap={fuel:"⛽",shop:"🛍️",rest:"👥",road:""};
+    const colorMap={fuel:"#101827",shop:"#245bff",rest:"#16843c",road:"transparent"};
+    if(x.type==="road"){
+      L.marker([x.lat,x.lng],{
+        icon:L.divIcon({html:`<div class="poiLabel">${x.name}</div>`,className:"",iconSize:[120,20]})
+      }).addTo(map);
+      return;
     }
+    L.marker([x.lat,x.lng],{
+      icon:L.divIcon({
+        html:`<div style="
+        width:34px;height:34px;border-radius:50%;
+        background:${colorMap[x.type]};border:2px solid rgba(255,255,255,.7);
+        display:flex;align-items:center;justify-content:center;
+        font-size:17px;box-shadow:0 0 18px rgba(255,255,255,.18);
+        ">${iconMap[x.type]}</div><div class="poiLabel">${x.name}</div>`,
+        className:"",iconSize:[90,55],iconAnchor:[17,17]
+      })
+    }).addTo(map);
+  });
+}
+
+function pointStyle(type){
+  if(type==="average") return {bg:"#f58a1f",shadow:"rgba(255,138,0,.65)",emoji:"⏱"};
+  if(type==="camera") return {bg:"#7c4dff",shadow:"rgba(124,77,255,.65)",emoji:"📷"};
+  if(type==="school") return {bg:"#2878ff",shadow:"rgba(40,120,255,.65)",emoji:"🎓"};
+  if(type==="danger") return {bg:"#ff273d",shadow:"rgba(255,39,61,.65)",emoji:"!"};
+  return {bg:"#00d97e",shadow:"rgba(0,217,126,.65)",emoji:"📍"};
+}
+
+function startDrive(){
+  if(!navigator.geolocation){alert("Konum desteği yok.");return;}
+  navigator.geolocation.watchPosition(pos=>{
+    const lat=pos.coords.latitude;
+    const lng=pos.coords.longitude;
+    const sp=Math.round((pos.coords.speed||0)*3.6);
+    const acc=pos.coords.accuracy;
+    const h=pos.coords.heading;
+    currentLat=lat;currentLng=lng;
+    if(h!==null && !Number.isNaN(h)) currentHeading=h;
 
     drawCar(lat,lng,acc,currentHeading);
-    updateRoute(lat,lng);
-    analyze(lat,lng,speed,currentHeading);
-
-  },err=>{
-    alert("Konum izni gerekli: " + err.message);
-  },{
-    enableHighAccuracy:true,
-    maximumAge:1000,
-    timeout:10000
+    updateTravel(lat,lng);
+    analyze(lat,lng,sp,currentHeading);
+  },err=>alert("Konum izni gerekli: "+err.message),{
+    enableHighAccuracy:true,maximumAge:1000,timeout:10000
   });
 }
 
 function drawCar(lat,lng,acc,heading){
-  const carIcon = L.divIcon({
-    html:`
-      <div class="carPulse" style="
-        width:46px;
-        height:46px;
-        border-radius:50%;
-        background:linear-gradient(135deg,#00e5ff,#0070ff);
-        border:4px solid white;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        font-size:22px;
-        transform:rotate(${heading}deg);
-      ">➤</div>
-    `,
-    className:"",
-    iconSize:[46,46],
-    iconAnchor:[23,23]
+  const icon=L.divIcon({
+    html:`<div class="carCenter" style="transform:rotate(${heading}deg)">➤</div>`,
+    className:"",iconSize:[54,54],iconAnchor:[27,27]
   });
-
   if(!carMarker){
-    carMarker = L.marker([lat,lng],{icon:carIcon}).addTo(map);
-    accuracyCircle = L.circle([lat,lng],{
-      radius:acc,
-      color:"#00e5ff",
-      fillColor:"#00e5ff",
-      fillOpacity:.10
+    carMarker=L.marker([lat,lng],{icon}).addTo(map);
+    accuracyCircle=L.circle([lat,lng],{
+      radius:acc,color:"#00eaff",fillColor:"#00eaff",fillOpacity:.10
     }).addTo(map);
-    map.setView([lat,lng],18);
   }else{
     carMarker.setLatLng([lat,lng]);
-    carMarker.setIcon(carIcon);
+    carMarker.setIcon(icon);
     accuracyCircle.setLatLng([lat,lng]);
     accuracyCircle.setRadius(acc);
   }
-
   map.setView([lat,lng],18,{animate:true});
 }
 
-function updateRoute(lat,lng){
-  traveled.push([lat,lng]);
-  if(traveled.length > 250) traveled.shift();
-  routeLine.setLatLngs(traveled);
+function updateTravel(lat,lng){
+  routePoints.push([lat,lng]);
+  if(routePoints.length>250) routePoints.shift();
+  routeLine.setLatLngs(routePoints);
 }
 
 function analyze(lat,lng,speed,heading){
-  document.getElementById("speed").innerText = speed;
-  document.getElementById("orbSpeed").innerText = speed;
+  const nearest=getNearest(lat,lng);
+  const p=nearest.point,d=nearest.distance,limit=p.limit||50;
 
-  const nearest = getNearest(lat,lng);
-  const p = nearest.point;
-  const d = nearest.distance;
-  const limit = p.limit || 50;
+  let risk=0;
+  if(d<1500)risk+=8;
+  if(d<1000)risk+=12;
+  if(d<700)risk+=18;
+  if(d<400)risk+=22;
+  if(speed>limit)risk+=25;
+  if(speed>limit+15)risk+=18;
+  if(p.type==="school")risk+=14;
+  if(p.type==="danger")risk+=18;
+  risk=Math.min(100,risk);
 
-  let risk = 0;
+  set("speed",speed);
+  set("orbSpeed",speed);
+  set("limit",limit);
+  set("distance",Math.round(d)+"m");
+  set("risk",risk);
+  set("compass",headingLabel(heading));
+  set("nextPoint","Yaklaşan nokta: "+p.name);
+  set("nextMeter",Math.round(d)+" m");
+  set("infoTitle",p.name);
+  set("infoText",`${p.note}  •  Limit ${limit} km/s  •  AI risk ${risk}/100`);
 
-  if(d < 1500) risk += 8;
-  if(d < 1000) risk += 12;
-  if(d < 700) risk += 18;
-  if(d < 400) risk += 22;
-  if(speed > limit) risk += 22;
-  if(speed > limit + 15) risk += 18;
-  if(p.type === "school") risk += 14;
-  if(p.type === "danger") risk += 18;
+  const progress=Math.min(100,Math.max(8,100-(d/2000)*100 + (d<700?12:0)));
+  document.getElementById("progress").style.width=progress+"%";
 
-  risk = Math.min(100,risk);
+  let msg=`AI Analiz: ${p.name} yaklaşık ${Math.round(d)} metre ileride. `;
+  if(speed>limit) msg+="Hız limitinin üzerindesin. Güvenli şekilde yavaşla.";
+  else if(d<500) msg+="Yaklaşan dikkat noktası var. Kontrollü ilerle.";
+  else msg+="Sürüş stabil. Risk düşük.";
+  set("aiText",msg);
 
-  document.getElementById("limit").innerText = limit;
-  document.getElementById("distance").innerText = Math.round(d) + "m";
-  document.getElementById("risk").innerText = risk;
-  document.getElementById("compass").innerText = headingLabel(heading);
-
-  document.getElementById("nextPoint").innerText = "Yaklaşan nokta: " + p.name;
-  document.getElementById("nextMeter").innerText = Math.round(d) + " m";
-
-  let prog = 100 - Math.min(100,(d/2000)*100);
-  if(d < 1000) prog += 10;
-  if(d < 500) prog += 15;
-  prog = Math.min(100, prog);
-
-  document.getElementById("progress").style.width = prog + "%";
-
-  let aiMsg = `AI Analiz: ${p.name} yaklaşık ${Math.round(d)} metre ileride. `;
-  if(speed > limit){
-    aiMsg += `Hız limitinin üzerindesin. Güvenli şekilde yavaşla.`;
-  }else if(d < 500){
-    aiMsg += `Yaklaşan dikkat noktası mevcut. Kontrollü ilerle.`;
-  }else{
-    aiMsg += `Sürüş stabil. Risk düşük.`;
-  }
-
-  document.getElementById("aiText").innerText = aiMsg;
-  document.getElementById("infoCard").innerText =
-    `${p.name} • ${p.note} • Limit ${limit} km/s • AI risk ${risk}/100`;
-
-  if(risk > 15 || d < 900){
-    aiBubble(aiMsg);
-  }
-
-  if(speed > limit){
+  if(speed>limit){
     warn("Hız Uyarısı",`Mevcut hız ${speed} km/s. Limit ${limit} km/s.`,"Hız limitinin üzerindesin. Güvenli şekilde yavaşla.");
-  }else if(d < 500){
+  }else if(d<500){
     warn(p.name,`${Math.round(d)} metre sonra. ${p.note}`,"Yaklaşan güvenlik noktası var. Dikkatli ilerle.");
   }
 }
 
 function getNearest(lat,lng){
-  let np = safetyPoints[0];
-  let nd = Infinity;
-
+  let np=safetyPoints[0],nd=Infinity;
   safetyPoints.forEach(p=>{
-    const dist = meterDistance(lat,lng,p.lat,p.lng);
-    if(dist < nd){
-      nd = dist;
-      np = p;
-    }
+    const d=dist(lat,lng,p.lat,p.lng);
+    if(d<nd){nd=d;np=p;}
   });
-
   return {point:np,distance:nd};
 }
 
-function aiBubble(text){
-  const bubble = document.getElementById("aiBubble");
-  document.getElementById("aiBubbleMsg").innerText = text;
-  bubble.style.display = "block";
-
-  clearTimeout(aiBubbleTimer);
-  aiBubbleTimer = setTimeout(()=>{
-    bubble.style.display = "none";
-  },3500);
-}
-
 function warn(title,msg,voiceMsg){
-  const now = Date.now();
-  if(now - lastWarn < 9000) return;
-  lastWarn = now;
-
-  document.getElementById("alertTitle").innerText = title;
-  document.getElementById("alertText").innerText = msg;
-  document.getElementById("alertBox").style.display = "block";
-
-  if(voiceEnabled) speak(voiceMsg);
-  if(navigator.vibrate) navigator.vibrate([250,100,250]);
-
-  setTimeout(()=>{
-    document.getElementById("alertBox").style.display = "none";
-  },6000);
+  const now=Date.now();
+  if(now-lastWarn<9000)return;
+  lastWarn=now;
+  set("alertTitle",title);
+  set("alertText",msg);
+  document.getElementById("alertBox").style.display="block";
+  if(voiceEnabled)speak(voiceMsg);
+  if(navigator.vibrate)navigator.vibrate([250,100,250]);
+  setTimeout(()=>document.getElementById("alertBox").style.display="none",6000);
 }
 
 function speak(text){
-  if(!("speechSynthesis" in window)) return;
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = "tr-TR";
-  u.rate = .95;
-  speechSynthesis.cancel();
-  speechSynthesis.speak(u);
+  if(!("speechSynthesis" in window))return;
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang="tr-TR";u.rate=.95;
+  speechSynthesis.cancel();speechSynthesis.speak(u);
 }
 
 function toggleVoice(){
-  voiceEnabled = !voiceEnabled;
-  document.getElementById("voiceState").innerText = voiceEnabled ? "AÇIK" : "KAPALI";
+  voiceEnabled=!voiceEnabled;
+  set("voiceState",voiceEnabled?"AÇIK":"KAPALI");
 }
 
 function toggleNight(){
-  document.getElementById("map").classList.toggle("night");
+  const mapEl=document.getElementById("map");
+  mapEl.style.filter = mapEl.style.filter ? "" : "brightness(.42) contrast(1.55) saturate(.75)";
 }
 
 function centerCar(){
-  if(currentLat && currentLng){
-    map.setView([currentLat,currentLng],18,{animate:true});
-  }
+  if(currentLat&&currentLng)map.setView([currentLat,currentLng],18,{animate:true});
 }
 
 function savePoint(){
-  if(!currentLat || !currentLng){
-    alert("Önce BAŞLAT ile konum alın.");
-    return;
-  }
-
-  const name = prompt("Nokta adı:", "Dikkat Noktası");
-  if(!name) return;
-
-  const point = {
-    name:name,
-    lat:currentLat,
-    lng:currentLng,
-    limit:50,
-    type:"user",
-    note:"Kullanıcı tarafından eklenen güvenlik noktası"
-  };
-
-  userSavedPoints.push(point);
-  localStorage.setItem("driveguard_points",JSON.stringify(userSavedPoints));
+  if(!currentLat||!currentLng){alert("Önce BAŞLAT ile konum alın.");return;}
+  const name=prompt("Nokta adı:","Dikkat Noktası");
+  if(!name)return;
+  const point={name,lat:currentLat,lng:currentLng,limit:50,type:"user",note:"Kullanıcı tarafından eklenen güvenlik noktası"};
+  saved.push(point);
+  localStorage.setItem("driveguard_points",JSON.stringify(saved));
   alert("Nokta kaydedildi. Sayfayı yenile.");
 }
 
 function headingLabel(deg){
-  if(deg===null || Number.isNaN(deg)) return "N";
+  if(deg===null||Number.isNaN(deg))return "N";
   const dirs=["N","NE","E","SE","S","SW","W","NW"];
   return dirs[Math.round(deg/45)%8];
 }
 
-function meterDistance(lat1,lng1,lat2,lng2){
+function dist(lat1,lng1,lat2,lng2){
   const R=6371000;
   const dLat=(lat2-lat1)*Math.PI/180;
   const dLng=(lng2-lng1)*Math.PI/180;
-
-  const a =
-    Math.sin(dLat/2)*Math.sin(dLat/2)+
-    Math.cos(lat1*Math.PI/180)*
-    Math.cos(lat2*Math.PI/180)*
-    Math.sin(dLng/2)*Math.sin(dLng/2);
-
-  const c=2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-  return R*c;
+  const a=Math.sin(dLat/2)**2+
+    Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
+
+function set(id,val){document.getElementById(id).innerText=val}
 
 initMap();
 </script>
-
 </body>
 </html>
