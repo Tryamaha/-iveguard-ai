@@ -10,7 +10,55 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+/* V31.1 MOBILE OVERLAP FIX */
+.topCard{
+  width:300px !important;
+  left:12px !important;
+  top:calc(env(safe-area-inset-top) + 10px) !important;
+}
 
+.rightMenu{
+  top:calc(env(safe-area-inset-top) + 300px) !important;
+  right:12px !important;
+  width:160px !important;
+  gap:7px !important;
+}
+
+.ctrl{
+  min-width:160px !important;
+  padding:11px 10px !important;
+  font-size:13px !important;
+  border-radius:16px !important;
+}
+
+#streetChip{
+  top:calc(env(safe-area-inset-top) + 250px) !important;
+  left:12px !important;
+  right:12px !important;
+  transform:none !important;
+  min-width:0 !important;
+  max-width:none !important;
+}
+
+.infoCard{
+  left:132px !important;
+  right:12px !important;
+  bottom:178px !important;
+}
+
+.speedHud{
+  left:16px !important;
+  bottom:178px !important;
+}
+
+#followBtn{
+  left:18px !important;
+  bottom:315px !important;
+}
+
+.liveFooter{
+  bottom:12px !important;
+}
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{
