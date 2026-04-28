@@ -10,7 +10,23 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+/* V26 FOOTER FIX */
+.liveFooter{
+  top:auto !important;
+  bottom:calc(env(safe-area-inset-bottom) + 10px) !important;
+  left:12px !important;
+  right:12px !important;
+  z-index:24 !important;
+}
 
+.topPanel{
+  max-height:160px !important;
+  overflow:hidden !important;
+}
+
+.drawerTab{
+  top:calc(env(safe-area-inset-top) + 100px) !important;
+}
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{
