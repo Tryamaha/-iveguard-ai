@@ -10,7 +10,47 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+/* V25 NAV BAR FIX */
+.navBar{
+  top:calc(env(safe-area-inset-top) + 92px) !important;
+  bottom:auto !important;
+  left:auto !important;
+  right:8px !important;
+  transform:none !important;
+  flex-direction:row !important;
+  gap:6px !important;
+  z-index:65 !important;
+}
 
+.navBtn{
+  width:38px !important;
+  height:38px !important;
+  padding:0 !important;
+  border-radius:50% !important;
+  background:rgba(5,12,26,.38) !important;
+  backdrop-filter:blur(10px) !important;
+  -webkit-backdrop-filter:blur(10px) !important;
+  border:1px solid rgba(255,255,255,.18) !important;
+  font-size:0 !important;
+}
+
+.navBtn:nth-child(1)::after{
+  content:"‹";
+  font-size:28px;
+  line-height:38px;
+}
+
+.navBtn:nth-child(2)::after{
+  content:"⌖";
+  font-size:18px;
+  line-height:38px;
+}
+
+.navBtn:nth-child(3)::after{
+  content:"×";
+  font-size:24px;
+  line-height:38px;
+}
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{
