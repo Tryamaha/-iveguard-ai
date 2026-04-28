@@ -59,6 +59,57 @@
 .liveFooter{
   bottom:12px !important;
 }
+  /* V31.2 HARD MOBILE FIX */
+.topCard{
+  width:calc(100vw - 32px) !important;
+  left:16px !important;
+  right:16px !important;
+  top:calc(env(safe-area-inset-top) + 12px) !important;
+}
+
+.rightMenu{
+  left:16px !important;
+  right:16px !important;
+  top:calc(env(safe-area-inset-top) + 320px) !important;
+  width:auto !important;
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:8px !important;
+}
+
+.ctrl{
+  min-width:0 !important;
+  width:100% !important;
+  padding:11px 8px !important;
+  font-size:13px !important;
+  border-radius:16px !important;
+}
+
+#streetChip{
+  top:calc(env(safe-area-inset-top) + 555px) !important;
+  left:16px !important;
+  right:16px !important;
+  transform:none !important;
+  min-width:0 !important;
+  max-width:none !important;
+  width:auto !important;
+}
+
+#followBtn{
+  left:18px !important;
+  bottom:318px !important;
+}
+
+.speedHud{
+  left:18px !important;
+  bottom:178px !important;
+}
+
+.infoCard{
+  left:130px !important;
+  right:16px !important;
+  bottom:178px !important;
+}
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{
